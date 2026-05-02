@@ -1,35 +1,13 @@
 # agentic-seo-kit
 
-> Kit open source para criar um site Next.js SSG com PageSpeed 100 e conteúdo PT-BR otimizado para SEO Agêntico em poucos minutos.
+Kit open-source para criar sites **Next.js SSG com PageSpeed 100** e conteúdo
+PT-BR otimizado para **SEO Agêntico**.
 
-**Por [Diego Ivo](https://github.com/diegoivo), na [Conversion](https://conversion.com.br)**. Open source MIT.
+Criado por [Diego Ivo](https://github.com/diegoivo) na
+[Conversion](https://conversion.com.br) como parte do movimento brasileiro de
+SEO Agêntico.
 
-Se sua empresa precisa implementar SEO Agêntico em escala (+500 funcionários, ICP enterprise), [fale com o time da Conversion](mailto:contato@conversion.com.br).
-
-## O que faz
-
-4 comandos, executados sequencialmente em qualquer agente compatível com `AGENTS.md`:
-
-```
-/design   <descreva a vibe da marca>
-/scaffold
-/conteudo <tema do post>
-/publicar
-```
-
-Resultado: site Next.js publicado no Vercel preview, com PageSpeed 100, design system próprio (gerado por [stitch-design-taste](https://github.com/anthropics/skill-stitch-design-taste)), e 1 artigo PT-BR otimizado seguindo o método.
-
-## Pré-requisitos
-
-- [Node.js 22 ou 24 LTS](https://nodejs.org)
-- Git
-- Um agente compatível com `AGENTS.md`:
-  - [Antigravity](https://antigravity.google) (free tier, recomendado para começar)
-  - [Claude Code](https://claude.ai/code)
-  - [Codex CLI](https://github.com/openai/codex), Cursor, Aider, ou similar
-- Conta gratuita no [Vercel](https://vercel.com) (login no primeiro `/publicar`)
-
-## Quick start
+## Quickstart (5 passos, ~30 min)
 
 ```bash
 git clone https://github.com/diegoivo/agentic-seo-kit meu-site
@@ -37,57 +15,102 @@ cd meu-site
 npm install
 ```
 
-Abra o agente da sua escolha apontando para esse diretório e rode os 4 comandos em sequência. Cada um leva 2-5 minutos.
+Depois, abra o repo no seu agent (Claude Code, Codex, Cursor, etc.) e rode
+em sequência:
 
-## O que NÃO fazemos (anti-AI-slop)
+```
+/design   Marca de fintech para PMEs, sóbria mas humana
+/scaffold
+/conteudo Como escolher uma agência de SEO Agêntico para B2B
+/publicar
+```
 
-Para criar autoridade visual real, este kit recusa os patterns que gritam "AI-generated":
+Cada comando aciona uma skill em `.claude/skills/`. Se o seu host não suporta
+slash commands, peça em linguagem natural:
 
-- ❌ Inter, Roboto, Arial, system-ui como font (use General Sans, Geist, Manrope, ou outras curadas)
-- ❌ Gradient roxo/violeta/indigo no background
-- ❌ 3 cards uniformes lado-a-lado com ícones em círculos coloridos
-- ❌ Border-radius bubbly em tudo
-- ❌ #000000 e #FFFFFF puros
-- ❌ Copy genérica ("Welcome to...", "Your all-in-one...", "Unlock the power of...")
-- ❌ Vocabulário de IA: delve, crucial, robust, comprehensive, tapestry, etc.
+> "Siga `.claude/skills/conteudo/SKILL.md` para escrever um artigo sobre X"
 
-Lista completa em `AGENTS.md`.
+## O que vem dentro
 
-## Defaults seguros
+| Pasta | Para quê |
+|---|---|
+| `app/` | Next.js 15 App Router, SSG via `output: 'export'` |
+| `lib/` | Helpers (`content`, `seo`, `site-config`) |
+| `components/` | `SiteHeader`, `SiteFooter` (UI mínima) |
+| `content/` | Posts MDX (1 post seed incluído) |
+| `wiki/` | **Memória do projeto** — vault Obsidian-friendly |
+| `.claude/skills/` | Skills do kit (`design-taste`, `scaffold-ssg`, `conteudo`, `publicar`, `wiki`, `scaffold-payload`) |
+| `.claude/commands/` | Slash commands shim para Claude Code |
+| `DESIGN.md` + `DESIGN.tokens.json` | Design system (regenerável por `/design`) |
+| `AGENTS.md` | Orquestrador — leitura obrigatória para qualquer agent |
 
-Quando você não sabe que vibe quer, `/design` seleciona randomicamente de:
-- **10 paletas curadas** (Editorial Bege, Linho Frio, Pedra, Manhã, Indigo Klein, Carvão, Tofu, Branco Cru, Pó de Café, Areia)
-- **10 font pairs curados** (todos via `next/font/google`, zero Inter)
+## Wiki como memória
 
-Cada combinação é testada para contrast AA+ e segue o spec [DESIGN.md open source](https://mindwiredai.com/2026/04/23/design-md-is-now-open-source/) do Google.
+`wiki/` é vault Obsidian-friendly. Abra a pasta no Obsidian (Open folder as
+vault) e edite as notas:
 
-## Stack
+- `wiki/conteudo/principios.md` — 10+ princípios editoriais
+- `wiki/conteudo/pov-da-marca.md` — POVs proprietários (preencha para sua marca)
+- `wiki/conteudo/voz-pt-br.md` — regras de voz brasileira
+- `wiki/tecnologia/stack.md` — decisões de stack
 
-- [Next.js](https://nextjs.org) App Router (SSG via `output: 'export'`)
-- [Tailwind CSS](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com) (componentes mínimos: button, card, badge)
-- [Vercel](https://vercel.com) para deploy preview
-- [next/font/google](https://nextjs.org/docs/app/api-reference/components/font) + [next/image](https://nextjs.org/docs/app/api-reference/components/image) para Lighthouse 100
+Skills do kit **leem** a wiki antes de gerar qualquer artefato. Sem 3 POVs
+claros em `pov-da-marca.md` aplicáveis ao tema, a skill `conteudo` recusa
+escrever.
 
-## O método (resumo)
+## Stack (default = SSG)
 
-10-20 princípios em [`content/_principios.md`](./content/_principios.md). Os mais importantes:
+- **Next.js 15** App Router, React 19, TypeScript estrito
+- **Tailwind 3.4** com tokens via `DESIGN.tokens.json`
+- **MDX** para posts (`next-mdx-remote/rsc` + `gray-matter`)
+- **`next/font/google`** para fontes (zero `<link>`)
+- **Output**: `export` estático → qualquer CDN serve
 
-1. **Wiki primeiro, web depois** — POV proprietário antes de pesquisa externa
-2. **Skyscraper por padrão, intenção manda na forma**
-3. **POV proprietário > consenso** — 3-5 posições que só esta marca sustenta
-4. **Domínio próprio: linkagem interna primeiro**
-5. **Anti-jargão**, **citações verificáveis**, **PT-BR sempre**
-6. **JSON-LD Article + Organization** em toda página
+Para sites grandes (>50 posts ou >3 autores), há caminho alternativo
+`scaffold-payload` — não-default, exige confirmação. Ver
+`.claude/skills/scaffold-payload/SKILL.md`.
 
-## Comunidade
+## Scripts
 
-Versão público-facing em construção. Acesso à comunidade para alunos da [masterclass de SEO Agêntico da Conversion](https://conversion.com.br) (gratuita).
+```bash
+npm run dev        # dev server local
+npm run build      # build estático para out/
+npm run lint       # ESLint
+npm run typecheck  # tsc --noEmit
+```
 
-## Licença
+## PageSpeed 100 por construção
 
-[MIT](./LICENSE). Use, fork, adapte, ensine. Se evoluir o método, considere abrir PR.
+- Fontes via `next/font` (sem CLS).
+- Imagens via `next/image` com `unoptimized: true` (export estático).
+- Zero JS de terceiros na home.
+- Tailwind purge automático.
+- HTML estático servido por CDN.
+
+Métricas alvo: Performance 100, Accessibility 100, Best Practices ≥95, SEO 100.
+Ver `wiki/tecnologia/performance.md` para diagnóstico se cair.
+
+## SEO técnico incluído
+
+- JSON-LD `Organization` na home.
+- JSON-LD `Article` em posts.
+- `app/sitemap.ts` (estático).
+- `app/robots.ts` (estático).
+- Open Graph e Twitter Card via Metadata API.
+- Trailing slash consistente (`trailingSlash: true`).
+
+## Como o método se diferencia
+
+1. **Wiki primeiro, web depois** — memória de marca antes de pesquisar fora.
+2. **POV proprietário > consenso** — sem 3 POVs claros, não escreve.
+3. **PT-BR estrito** — hard-checks contra PT-PT, gerundismo, voz passiva, AI slop.
+4. **PageSpeed 100 não-negociável** — pré-condição para citação por LLMs.
 
 ## Contribuindo
 
-PRs bem-vindos. Para mudanças no método (princípios PT-BR, paletas, prompts), abra issue antes para discutir.
+Issues e PRs bem-vindos. Se você evoluir o método, considere documentar em
+`wiki/` e abrir PR.
+
+## Licença
+
+MIT. Use, fork, adapte.
