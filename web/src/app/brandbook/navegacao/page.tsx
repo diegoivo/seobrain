@@ -1,4 +1,6 @@
 import { GridContainer, GridCol } from "@/components/grid";
+import { PageHeader } from "@/components/brandbook/PageHeader";
+import { BRAND } from "@/lib/brand-config";
 
 export const metadata = { title: "Navegação" };
 
@@ -6,11 +8,12 @@ export default function Navegacao() {
   return (
     <GridContainer>
       <GridCol span={4} spanMd={8} spanLg={10}>
-        <p className="eyebrow mb-6">Brandbook · Componentes · Navegação</p>
-        <h1 className="mb-8">Header, footer, breadcrumb, skip-link.</h1>
-        <p className="prose" style={{ marginBottom: "var(--space-12)" }}>
-          Estrutura mínima de navegação. Skip-link é obrigatório (WCAG 2.4.1).
-        </p>
+        <PageHeader
+          breadcrumb="Componentes · Navegação"
+          state="F+M"
+          title="Header, footer, breadcrumb, skip-link."
+          lead="Estrutura mínima. Skip-link obrigatório (WCAG 2.4.1). aria-current=page no link ativo."
+        />
 
         <h2 className="mb-6">Skip link</h2>
         <p className="prose" style={{ marginBottom: "var(--space-6)", maxWidth: "100%" }}>
@@ -56,7 +59,7 @@ export default function Navegacao() {
               color: "var(--color-fg)",
             }}
           >
-            seobrain
+            {BRAND.wordmark}
           </a>
           <nav style={{ display: "flex", gap: "var(--space-6)" }}>
             <a href="#" style={{ fontSize: "var(--text-sm)", color: "var(--color-muted)", textDecoration: "none" }}>Blog</a>
@@ -114,7 +117,7 @@ export default function Navegacao() {
                   margin: 0,
                 }}
               >
-                seobrain
+                {BRAND.wordmark}
               </p>
               <p style={{ marginTop: "var(--space-3)", fontSize: "var(--text-sm)", color: "var(--color-muted)", maxWidth: "32ch" }}>
                 Posicionamento curto da marca em uma frase.
