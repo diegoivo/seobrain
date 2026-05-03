@@ -7,8 +7,11 @@
   "skills": [
     "./skills/onboard",
     "./skills/plano",
-    "./skills/web-best-practices",
+    "./skills/site-criar",
     "./skills/scaffold-page",
+    "./skills/brandbook",
+    "./skills/setup-email",
+    "./skills/web-best-practices",
     "./skills/perf-audit",
     "./skills/seo-tecnico",
     "./skills/seo-onpage",

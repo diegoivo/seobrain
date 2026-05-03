@@ -183,6 +183,21 @@ Implementado via hook `PreToolUse`.
 
 ---
 
+## 7.7 Domínio temporário Vercel
+
+Pré-deploy o usuário não tem domínio próprio apontado, então:
+
+- `brain/config.md` mantém `Domínio definitivo: TEMPLATE` e `Domínio temporário: pendente`.
+- Após o **primeiro deploy** via `/vercel:deploy` ou `vercel --prod`, agente:
+  1. Lê URL `*.vercel.app` retornada pelo Vercel CLI.
+  2. Atualiza `brain/config.md` no campo `Domínio temporário`.
+  3. Atualiza `metadataBase` em `web/src/app/layout.tsx` para apontar pra esta URL temporária.
+  4. Confirma com o usuário: "Pré-deploy ok. Acesse [URL]. Quando o domínio definitivo apontar, me avise para atualizar `canonical` e `metadataBase`."
+
+Enquanto não houver domínio definitivo, todos os `canonical` apontam para a URL temporária do Vercel. Isso evita SEO ruim de domínio fantasma.
+
+---
+
 ## 8. SEO e qualidade web
 
 ### 8.1 SEO sempre, por construção
