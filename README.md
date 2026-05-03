@@ -137,12 +137,27 @@ npm run brandbook:pdf           # exporta brandbook para PDF
 
 ## Editar o Brain no Obsidian
 
+Setup completo em [`docs/obsidian-setup.md`](./docs/obsidian-setup.md). Resumo:
+
 1. Instale [Obsidian](https://obsidian.md) (free).
 2. Abra `brain/` como vault.
 3. Edite com wikilinks `[[arquivo]]`, tags `#brand`, callouts `> [!warning]`.
-4. Plugins recomendados (opcionais): **Templater** (templates de verbetes), **Dataview** (dashboards read-only).
+4. Plugins recomendados: **Templater** (templates de verbetes), **Dataview** (dashboards read-only).
 
-Não use Obsidian para editar `AGENTS.md` ou skills — agents não-Obsidian parseiam markdown padrão melhor.
+Não há `/brain viewer` no Next porque seria duplicação ruim — Obsidian já é a melhor ferramenta para navegar wiki estruturada.
+
+---
+
+## Decisões canônicas do framework
+
+Documentação que **não muda por projeto** — herdada de todo bootstrap:
+
+- [`docs/grid-system.md`](./docs/grid-system.md) — CSS Grid 12-col + Subgrid + Container Queries + spacing 4-base.
+- [`docs/typography.md`](./docs/typography.md) — perfect fourth (1.333) sobre body 1.125rem, line-height 1.7, measure 65ch, anchor-down spacing.
+- [`docs/hero-backgrounds.md`](./docs/hero-backgrounds.md) — 5 modelos canônicos de hero não-AI-slop.
+- [`docs/obsidian-setup.md`](./docs/obsidian-setup.md) — workflow recomendado para o brain.
+
+A marca específica entra em **fontes** (Google/Bunny) e **paleta** (6 papéis funcionais). Escala, grid e ritmo permanecem.
 
 ---
 
