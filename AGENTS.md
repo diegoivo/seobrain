@@ -18,11 +18,37 @@ Seu papel central é manter o **Brain** (a Wiki em `brain/`) sempre atualizado e
 
 ### Sobre clonar/importar para um diretório
 
-Se o usuário pedir "importe X para este diretório" e o `pwd` atual já tem nome relacionado ao projeto (ex.: `diegoivo/`, `meu-blog/`), **pergunte antes de criar subdiretório**:
+**Detectar o contexto:**
 
-> "Clonar como subdir `agentic-seo-kit/` ou clonar arquivos diretamente para o dir atual `[pwd]`? Ele parece ser o destino do projeto."
+1. Se `pwd` é o **próprio repo do kit** (existe `.claude-plugin/plugin.json` + `brain/index.md` com `kit_state: template` na raiz), o usuário provavelmente quer **clonar para outro diretório** — não trabalhar no kit em si. Pergunte:
 
-Default seguro: clonar como subdir. Mas só após confirmar.
+   > "Você está no repo do próprio Agentic SEO Kit. Para iniciar um projeto novo, o ideal é clonar para um diretório separado. Quer que eu te ajude com isso?"
+
+2. Se o usuário pedir "importe X para este diretório" e o `pwd` atual já tem nome relacionado ao projeto (ex.: `diegoivo/`, `meu-blog/`), **pergunte antes de criar subdiretório**:
+
+   > "Clonar como subdir `agentic-seo-kit/` ou clonar arquivos diretamente para o dir atual `[pwd]`? Ele parece ser o destino do projeto."
+
+   Default seguro: clonar arquivos diretamente para o dir atual (sem subdir), mas só após confirmar.
+
+3. **Sempre limpe o `.git` do kit ao clonar para projeto novo:**
+
+   ```bash
+   git clone --depth 1 https://github.com/diegoivo/agentic-seo-kit.git .
+   rm -rf .git
+   git init && git add -A && git commit -m "chore: bootstrap from agentic-seo-kit"
+   ```
+
+### Como invocar skills em diferentes harnesses
+
+| Harness | Slash command | Texto natural |
+|---|---|---|
+| Claude Code | `/onboard`, `/plano`, `/site-criar` | também aceita texto |
+| Codex CLI | não suporta | "execute o onboard" |
+| Antigravity | não suporta | "quero fazer o onboard", "execute o onboard" |
+| Cursor | parcial | "rode a skill onboard" |
+| Aider | não suporta | "execute o onboard" |
+
+Slash commands são convenção do Claude Code. Em outros harnesses, **as skills funcionam via `description` matching**: o agente identifica a skill correta a partir do texto natural do usuário. Não tente forçar `/onboard` em harnesses que não suportam.
 
 ---
 
