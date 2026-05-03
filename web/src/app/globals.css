@@ -291,6 +291,11 @@ p { text-wrap: pretty; }
   .hide-on-mobile { display: revert; }
 }
 
+/* Demo de container query no brandbook (Grid page). */
+@container (min-width: 480px) {
+  .cq-card { grid-template-columns: 1fr auto !important; }
+}
+
 /* ======================================================================
    Brandbook shell — sidebar nav fixa + main scrolling.
    Sidebar 240px em ≥1024px; drawer off-canvas em telas menores.
