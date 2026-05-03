@@ -20,8 +20,7 @@
     "perf:audit": "node scripts/perf-audit.mjs",
     "kit:reset-template": "node scripts/kit-reset-template.mjs",
     "web:dev": "cd web && npm run dev",
-    "web:build": "cd web && npm run build",
-    "brandbook:pdf": "node scripts/brandbook-pdf.mjs"
+    "web:build": "cd web && npm run build"
   },
   "license": "MIT"
 }

@@ -40,10 +40,6 @@ export default function BrandbookHome() {
               <code>[F+M]</code> = ambos (estrutura framework, conteúdo da marca).
             </li>
             <li>
-              <strong>Exportar PDF:</strong> rode <code>npm run brandbook:pdf</code> na
-              raiz. Saída em <code>brain/brandbook.pdf</code>.
-            </li>
-            <li>
               <strong>Dev-only:</strong> rota <code>/brandbook/*</code> tem{" "}
               <code>X-Robots-Tag: noindex, nofollow</code> e{" "}
               <code>robots.txt</code> bloqueando indexação.
