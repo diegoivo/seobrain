@@ -1,0 +1,23 @@
+{
+  "name": "agentic-seo-kit",
+  "version": "0.1.0",
+  "description": "Agentic SEO Kit — orquestrador de SEO/GEO com sub-agents especialistas, skyscraper-by-default, GEO embutido. Multi-harness (Claude Code prioritário, Codex, Cursor, Antigravity).",
+  "author": "Conversion (https://www.conversion.com.br)",
+  "license": "MIT",
+  "skills": [
+    "./skills/seo-tecnico",
+    "./skills/seo-onpage",
+    "./skills/seo-estrategia",
+    "./skills/seo-imagens",
+    "./skills/geo-checklist",
+    "./skills/intent-analyst",
+    "./skills/design-init",
+    "./skills/add-cms",
+    "./skills/update-brain",
+    "./skills/brain-lint",
+    "./skills/artigo"
+  ],
+  "commands": [
+    "./commands/aprovado.md"
+  ]
+}

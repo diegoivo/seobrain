@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+.cache/
+.context/
+.gstack/
+.env
+.env.local
+.DS_Store
+*.log
+.claude/skills/_external/
+.claude/skills-lock.json
+brain/seo/reports/*.json
+brain/seo/reports/*.md
+!brain/seo/reports/.gitkeep
