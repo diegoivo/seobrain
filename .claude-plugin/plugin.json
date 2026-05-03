@@ -6,6 +6,8 @@
   "license": "MIT",
   "skills": [
     "./skills/onboard",
+    "./skills/onboard-brain",
+    "./skills/onboard-brandbook",
     "./skills/plano",
     "./skills/site-criar",
     "./skills/site-clone",
