@@ -1,93 +1,120 @@
-# agentic-seo-kit
+# Agentic SEO Kit
 
-> Kit open source para criar um site Next.js SSG com PageSpeed 100 e conteúdo PT-BR otimizado para SEO Agêntico em poucos minutos.
+Repositório template + plugin Claude Code para projetos de SEO/GEO. Pensado para ser **multi-harness**: roda primariamente em **Claude Code**, mas funciona em Codex, Cursor e Antigravity via `AGENTS.md`.
 
-**Por [Diego Ivo](https://github.com/diegoivo), na [Conversion](https://conversion.com.br)**. Open source MIT.
+## Filosofia em uma frase
 
-Se sua empresa precisa implementar SEO Agêntico em escala (+500 funcionários, ICP enterprise), [fale com o time da Conversion](mailto:contato@conversion.com.br).
+Brain (wiki) como fonte de verdade humana, sub-agents especialistas, Skyscraper como filosofia, GEO embutido como princípio editorial, estático por padrão e Vercel Marketplace como caminho default para serviços.
 
-## O que faz
+> O agente lê `AGENTS.md` ao iniciar. `CLAUDE.md`, `.cursorrules` e `.aider.conf.yml` são stubs que apontam para lá.
 
-4 comandos, executados sequencialmente em qualquer agente compatível com `AGENTS.md`:
-
-```
-/design   <descreva a vibe da marca>
-/scaffold
-/conteudo <tema do post>
-/publicar
-```
-
-Resultado: site Next.js publicado no Vercel preview, com PageSpeed 100, design system próprio (gerado por [stitch-design-taste](https://github.com/anthropics/skill-stitch-design-taste)), e 1 artigo PT-BR otimizado seguindo o método.
-
-## Pré-requisitos
-
-- [Node.js 22 ou 24 LTS](https://nodejs.org)
-- Git
-- Um agente compatível com `AGENTS.md`:
-  - [Antigravity](https://antigravity.google) (free tier, recomendado para começar)
-  - [Claude Code](https://claude.ai/code)
-  - [Codex CLI](https://github.com/openai/codex), Cursor, Aider, ou similar
-- Conta gratuita no [Vercel](https://vercel.com) (login no primeiro `/publicar`)
-
-## Quick start
+## Bootstrap
 
 ```bash
-git clone https://github.com/diegoivo/agentic-seo-kit meu-site
-cd meu-site
-npm install
+# 1. Clonar como template
+gh repo create meu-projeto --template <fork-deste-repo>
+cd meu-projeto
+
+# 2. Instalar skills externas (Vercel)
+npm run setup
+
+# 3. Iniciar o app web (porta aleatória via get-port)
+cd web && npm install && npm run dev
 ```
 
-Abra o agente da sua escolha apontando para esse diretório e rode os 4 comandos em sequência. Cada um leva 2-5 minutos.
+No Claude Code, abra o projeto e rode:
 
-## O que NÃO fazemos (anti-AI-slop)
+```
+/design-init       # 10 perguntas que geram brain/DESIGN.md único
+```
 
-Para criar autoridade visual real, este kit recusa os patterns que gritam "AI-generated":
+## Estrutura
 
-- ❌ Inter, Roboto, Arial, system-ui como font (use General Sans, Geist, Manrope, ou outras curadas)
-- ❌ Gradient roxo/violeta/indigo no background
-- ❌ 3 cards uniformes lado-a-lado com ícones em círculos coloridos
-- ❌ Border-radius bubbly em tudo
-- ❌ #000000 e #FFFFFF puros
-- ❌ Copy genérica ("Welcome to...", "Your all-in-one...", "Unlock the power of...")
-- ❌ Vocabulário de IA: delve, crucial, robust, comprehensive, tapestry, etc.
+```
+.
+├── AGENTS.md                  source-of-truth (lido por Codex/Cursor/Antigravity)
+├── CLAUDE.md                  stub @AGENTS.md
+├── .cursorrules               stub
+├── .aider.conf.yml            stub
+├── .claude-plugin/plugin.json manifest do plugin
+├── .claude/
+│   ├── skills/                seo-tecnico, seo-onpage, seo-estrategia, seo-imagens,
+│   │                          geo-checklist, intent-analyst, design-init, add-cms,
+│   │                          update-brain, brain-lint, artigo
+│   ├── commands/              /aprovado
+│   └── settings.json          hooks
+├── brain/                     wiki — fonte canônica do julgamento humano
+│   ├── index.md
+│   ├── tom-de-voz.md
+│   ├── personas.md
+│   ├── glossario/index.md
+│   ├── tecnologia/index.md
+│   ├── DESIGN.md              gerado por /design-init
+│   ├── backlog.md
+│   └── seo/reports/           outputs do SEO Score
+├── content/
+│   ├── posts/                 markdown — drafts e publicações
+│   └── site/
+├── web/                       Next.js SSG (Vercel-ready)
+├── scripts/
+│   ├── seo-score.mjs          10 categorias, Flesch PT-BR, peso GEO 10
+│   ├── brain-lint.mjs         valida frontmatter, índices, freshness
+│   ├── content-sync.mjs       pipeline markdown → Payload (no-op até add-cms)
+│   ├── session-start.mjs      hook SessionStart (sugestões de contexto)
+│   └── pre-tool-use.mjs       hook PreToolUse (auto vs confirmação)
+└── package.json
+```
 
-Lista completa em `AGENTS.md`.
+## Skills do kit
 
-## Defaults seguros
+| Skill | Função |
+|---|---|
+| `seo-tecnico` | Auditoria técnica completa (`seo-score.mjs`) |
+| `seo-onpage` | Otimização de uma página/post |
+| `seo-estrategia` | Estratégia em 7 passos (concorrentes → linkbait → PR) |
+| `seo-imagens` | Checklist de imagens (formato, peso, alt, lazy) |
+| `geo-checklist` | 20 itens GEO consolidados |
+| `intent-analyst` | Sub-agent que analisa intenção de busca |
+| `design-init` | 10 perguntas → DESIGN.md único |
+| `add-cms` | Bolt-on Payload + Neon (≥100 páginas/3 meses) |
+| `update-brain` | Mantém o Brain atualizado (disparada por `/aprovado`) |
+| `brain-lint` | Valida frontmatter e freshness |
+| `artigo` | Pipeline completo de criação de artigo |
 
-Quando você não sabe que vibe quer, `/design` seleciona randomicamente de:
-- **10 paletas curadas** (Editorial Bege, Linho Frio, Pedra, Manhã, Indigo Klein, Carvão, Tofu, Branco Cru, Pó de Café, Areia)
-- **10 font pairs curados** (todos via `next/font/google`, zero Inter)
+## Comandos úteis
 
-Cada combinação é testada para contrast AA+ e segue o spec [DESIGN.md open source](https://mindwiredai.com/2026/04/23/design-md-is-now-open-source/) do Google.
+```bash
+npm run seo:score https://meu-site.com   # roda SEO Score em URL
+npm run brain:lint                        # valida o Brain (warnings + erros)
+npm run brain:lint:strict                 # exit 1 em erros (CI)
+npm run skills:list                       # lista skills externas instaladas
+npm run skills:update                     # atualiza skills externas
+npm run web:dev                           # dev server na porta aleatória
+```
 
-## Stack
+## Quando o gatilho de banco dispara
 
-- [Next.js](https://nextjs.org) App Router (SSG via `output: 'export'`)
-- [Tailwind CSS](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com) (componentes mínimos: button, card, badge)
-- [Vercel](https://vercel.com) para deploy preview
-- [next/font/google](https://nextjs.org/docs/app/api-reference/components/font) + [next/image](https://nextjs.org/docs/app/api-reference/components/image) para Lighthouse 100
+Estado inicial: estático (`/content/*.md` + Next.js SSG). **Adicione Payload + Neon apenas** quando:
+- O site terá ≥100 páginas dinâmicas em 3 meses, **ou**
+- Editor não-técnico precisa publicar, **ou**
+- Existe necessidade comprovada de UI editorial.
 
-## O método (resumo)
+Quando disparar, peça ao agente: *"Roda `/add-cms`."*
 
-10-20 princípios em [`content/_principios.md`](./content/_principios.md). Os mais importantes:
+## Integrações opcionais
 
-1. **Wiki primeiro, web depois** — POV proprietário antes de pesquisa externa
-2. **Skyscraper por padrão, intenção manda na forma**
-3. **POV proprietário > consenso** — 3-5 posições que só esta marca sustenta
-4. **Domínio próprio: linkagem interna primeiro**
-5. **Anti-jargão**, **citações verificáveis**, **PT-BR sempre**
-6. **JSON-LD Article + Organization** em toda página
+Documentadas em `docs/integrations/`. Não fazem parte do `npm run setup` — entram apenas sob pedido explícito do usuário, para evitar dependências externas que o usuário final do kit não pediu.
 
-## Comunidade
+- [Stitch](docs/integrations/stitch.md) — importa design system de um projeto Stitch existente (alternativa ao `/design-init`).
 
-Versão público-facing em construção. Acesso à comunidade para alunos da [masterclass de SEO Agêntico da Conversion](https://conversion.com.br) (gratuita).
+## Filosofia editorial
+
+- **Brain primeiro.** Sempre leia `brain/` antes de pesquisar fora.
+- **Skyscraper por padrão**, com `intent-analyst` arbitrando a forma.
+- **POV proprietário > consenso.** Frontmatter `proprietary_claims[]` exige ≥3.
+- **Citável por LLMs.** TL;DR, FAQ schema, llms.txt, definições autocontidas.
+- **Capitalização brasileira** em todos os títulos (apenas primeira letra + nomes próprios).
 
 ## Licença
 
-[MIT](./LICENSE). Use, fork, adapte, ensine. Se evoluir o método, considere abrir PR.
-
-## Contribuindo
-
-PRs bem-vindos. Para mudanças no método (princípios PT-BR, paletas, prompts), abra issue antes para discutir.
+MIT.

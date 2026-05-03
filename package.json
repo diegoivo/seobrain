@@ -1,38 +1,20 @@
 {
   "name": "agentic-seo-kit",
   "version": "0.1.0",
-  "private": false,
-  "license": "MIT",
-  "description": "Open source kit para criar sites Next.js SSG com PageSpeed 100 e conteúdo PT-BR otimizado para SEO Agêntico",
-  "author": "Diego Ivo <diego@conversion.com.br>",
-  "homepage": "https://github.com/diegoivo/agentic-seo-kit",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/diegoivo/agentic-seo-kit.git"
-  },
+  "description": "Agentic SEO Kit — orquestrador SEO/GEO multi-harness com Claude Code prioritário",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "setup": "npm run skills:install",
+    "skills:install": "npx -y skills@latest add vercel-labs/agent-skills -y",
+    "skills:update": "npx -y skills@latest update",
+    "skills:list": "npx -y skills@latest list",
+    "seo:score": "node scripts/seo-score.mjs",
+    "brain:lint": "node scripts/brain-lint.mjs",
+    "brain:lint:strict": "node scripts/brain-lint.mjs --strict",
+    "content:sync": "node scripts/content-sync.mjs",
+    "web:dev": "cd web && npm run dev",
+    "web:build": "cd web && npm run build"
   },
-  "dependencies": {
-    "next": "^15.1.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "eslint": "^9.17.0",
-    "eslint-config-next": "^15.1.0",
-    "tailwindcss": "^3.4.17",
-    "postcss": "^8.5.0",
-    "autoprefixer": "^10.4.20",
-    "typescript": "^5.7.0"
-  },
-  "engines": {
-    "node": ">=22"
-  }
+  "license": "MIT"
 }
