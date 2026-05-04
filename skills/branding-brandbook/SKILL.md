@@ -1,6 +1,6 @@
 ---
 name: branding-brandbook
-description: Brandbook visual interativo e parrudo (consultoria de branding) em rotas Next.js dev /brandbook, /brandbook/cores, /brandbook/tipografia, /brandbook/voz. Roda OBRIGATORIAMENTE após /design-init (não é opcional). Aplica DESIGN.md e cobre cores em uso real, tipografia, componentes em todos os estados, voice samples, logo lockup, do/dont visual. Bidirecional - editar reflete no Brain. Use após design-init, ou quando o usuário pedir "brandbook", "preview do design", "guia de marca".
+description: Interactive visual brandbook scaffold for Next.js — live brand identity preview at /brandbook routes (cores, tipografia, voz, componentes, motion, grid, marca). Brand consultancy as code. Mandatorily runs after /branding-init. Applies DESIGN.md and covers colors in real use, typography hierarchy, all component states, voice samples, logo lockup, do/dont visual. Bidirectional — editing brandbook updates Brain. Use when user asks "brandbook", "preview do design", "guia de marca", "brand book", "design system preview", "visual brand identity scaffold". Renamed from /brandbook (consolidated v0.1.0).
 allowed-tools:
   - Read
   - Write

@@ -1,11 +1,3 @@
----
-name: competitor-keywords
-description: Lista as palavras-chave para as quais um domínio concorrente rankeia no Google via DataForSEO Labs Ranked Keywords API. Top 100 keywords com posição, volume, tráfego estimado, URL ranqueando. Output triplo (md + csv + json) em brain/seo/data/competitors/. Custo ~$0.30/domínio. Use quando usuário pedir "keywords do concorrente", "para quais keywords site rankeia", "competitor keywords", "site rankings", "ranked keywords". Pilar Dados.
-allowed-tools:
-  - Read
-  - Write
-  - Bash
----
 
 # /competitor-keywords — keywords ranqueadas de um concorrente
 

@@ -1,14 +1,3 @@
----
-name: artigo
-description: Escreve um artigo PT-BR seguindo Brain (tom de voz, personas, glossário) + Skyscraper + GEO embutido + frontmatter completo. HARD STOP - aborta se intent-analyst não rodou primeiro. Valida tamanho/parágrafos/bullets via scripts/article-quality.mjs (LLM é ruim para contar, scripts contam). Use quando o usuário pedir "escrever artigo", "criar post", "novo conteúdo", "blog post".
-allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - WebSearch
-  - WebFetch
-  - Grep
----
 
 # Artigo
 

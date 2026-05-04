@@ -1,6 +1,6 @@
 ---
 name: wiki-update
-description: Atualiza o Brain (wiki em brain/) com aprendizados, decisões e mudanças da última tarefa. Disparada pelo slash command /aprovado. Atualiza brain/index.md, brain/backlog.md e adiciona/atualiza arquivos relevantes (tecnologia, glossário, etc).
+description: Update LLM Wiki (brain/) with learnings, decisions, and changes from last completed task. Triggered by /approved slash command. Updates brain/index.md (date + executive summary), brain/backlog.md (pending items), brain/tecnologia/, brain/glossario/, content/*/index.md as applicable. Identifies repeatable patterns and suggests skill conversion. Use when user asks "update brain", "atualizar wiki", "documentar mudanças", "save learnings", "update knowledge base", or after task approval via /approved. Renamed from /update-brain (v0.1.0).
 allowed-tools:
   - Read
   - Write

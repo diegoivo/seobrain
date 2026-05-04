@@ -1,6 +1,6 @@
 ---
 name: branding-init
-description: Bootstrap de DESIGN.md via 10 perguntas que geram um design system único, anti-AI-slop. Roda quando brain/DESIGN.md não existe. Output - brain/DESIGN.md + brain/DESIGN.tokens.json. Use no início de um projeto novo, ou quando o usuário pedir "criar design system", "iniciar design".
+description: Bootstrap brand design system via 10 opinionated questions that generate a unique design system (anti-AI-slop). Generates DESIGN.md (Google methodology, decisions over consensus) + DESIGN.tokens.json (color palette, typography scale, radius, spacing, motion). Use when user asks "create design system", "iniciar design", "criar design system", "design init", "brand identity setup", "design tokens", or starts a new project without brain/DESIGN.md. Renamed from /design-init (v0.1.0).
 allowed-tools:
   - Read
   - Write

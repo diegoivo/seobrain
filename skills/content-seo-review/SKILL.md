@@ -1,6 +1,6 @@
 ---
 name: content-seo-review
-description: Sub-agent QA — valida voz da marca (brain/tom-de-voz.md), capitalização brasileira, antivícios IA, POVs proprietários no frontmatter, GEO (TL;DR + FAQs + schema). Output em .cache/qa-runs/<task>-content.md priorizado P0/P1/P2. Chamado pelo orquestrador /qa em paralelo. Não verifica design ou build.
+description: Editorial content review — validates brand voice (brain/tom-de-voz.md), Brazilian Portuguese capitalization rules, AI-cliché word detection, proprietary POVs in frontmatter, GEO essentials (TL;DR present, FAQs structured, FAQPage schema, Person schema E-E-A-T signals). Outputs prioritized P0/P1/P2 report in .cache/qa-runs/. Called by /qa orchestrator in parallel. Use when user asks "validate content", "review article", "validar voz", "content review", "editorial review", "validar artigo", "antivícios IA", "capitalização BR", "POVs check". Renamed from /qa-content (v0.1.0).
 allowed-tools:
   - Read
   - Grep

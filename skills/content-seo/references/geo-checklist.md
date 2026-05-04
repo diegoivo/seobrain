@@ -1,12 +1,3 @@
----
-name: geo-checklist
-description: Checklist completo de GEO (Generative Engine Optimization) — otimização para LLMs e AI Overviews. 20 itens consolidados. Use antes de publicar conteúdo informacional, ou quando o usuário pedir "otimizar para IA", "GEO", "ChatGPT search", "AI Overviews", "Perplexity".
-allowed-tools:
-  - Read
-  - Write
-  - WebFetch
-  - WebSearch
----
 
 # GEO — Generative Engine Optimization
 

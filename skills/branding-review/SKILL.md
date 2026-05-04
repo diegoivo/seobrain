@@ -1,6 +1,6 @@
 ---
 name: branding-review
-description: Sub-agent QA — valida design system aplicado, AI-slop, grid canônico, tipografia (perfect fourth, line-height 1.7, measure 65ch, anchor-down) e regra do primeiro viewport. Output em .cache/qa-runs/<task>-design.md priorizado P0/P1/P2. Chamado pelo orquestrador /qa em paralelo com qa-content e qa-tech. Não verifica copy ou build.
+description: Visual brand review — validates design system application, AI-slop detection (gradient purple-blue, generic shadows, AI cliché patterns), canonical grid, typography (perfect fourth scale 1.333, line-height 1.7, measure 65ch, anchor-down headings), first viewport rule (hero fits 100dvh mobile). Outputs prioritized P0/P1/P2 report in .cache/qa-runs/. Called by /qa orchestrator in parallel with content-seo-review and website-qa. Use when user asks "validate design", "brand review", "design QA", "design audit", "revisão visual", "validar design system", "AI-slop check". Renamed from /qa-design (v0.1.0).
 allowed-tools:
   - Read
   - Bash

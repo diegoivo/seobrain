@@ -1,11 +1,3 @@
----
-name: clone-fidelity
-description: Sub-agent QA pós-clone. Compara screenshot do site real (capturado por /site-clone) com screenshot do clone local (rodando em web/ via Next dev). Reporta deltas priorizados de paleta, radius, densidade, tipografia, layout. Output em .cache/clone/diff-report.md. Roda obrigatoriamente após /site-clone aplicar tokens. Use quando o usuário disser "validar clone", "comparar com original", "clone fiel", ou quando /site-clone terminar.
-allowed-tools:
-  - Read
-  - Write
-  - Bash
----
 
 # /clone-fidelity — QA visual pós-clone
 

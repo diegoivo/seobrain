@@ -1,6 +1,6 @@
 ---
 name: branding-onboard
-description: Fase 2 do onboarding — gera o brandbook visual (DESIGN.md + tokens + scaffold ao vivo). Lê brain/index.md (mood, posicionamento) e chama /design-init com defaults inferidos. Atualiza somente fontes em globals.css (escala/grid/spacing são canônicos do framework — não mexer). Popula textos do scaffold em web/src/app/brandbook/. Re-rodável isoladamente. Roda quando /onboard chamar ou usuário pedir "rodar fase brandbook", "gerar brandbook", "refazer design".
+description: Brand onboarding orchestrator — generates visual brandbook (DESIGN.md + DESIGN.tokens.json + live Next.js scaffold). Reads brain/index.md (mood, posicionamento) and invokes /branding-init with inferred defaults. Updates only fonts in globals.css (scale/grid/spacing are framework canonical — never touched). Populates scaffold copy in web/src/app/brandbook/. Re-runnable in isolation. Use when user asks "rodar fase brandbook", "gerar brandbook", "brand onboarding", "refazer design", "redo brand setup", or invoked by /seobrain:start. Renamed from /onboard-brandbook (v0.1.0).
 allowed-tools:
   - Read
   - Write

@@ -1,12 +1,3 @@
----
-name: seo-imagens
-description: Checklist completo de SEO para imagens — formato (SVG/JPEG/WebP/PNG), peso, lazy loading, ALT descritivo, nomenclatura. Use quando o usuário adicionar/editar imagens em um post, ou pedir "otimizar imagens", "checar imagens", "SEO de imagens".
-allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Grep
----
 
 # SEO de Imagens
 

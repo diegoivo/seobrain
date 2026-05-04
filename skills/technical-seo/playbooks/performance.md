@@ -1,12 +1,3 @@
----
-name: perf-audit
-description: Auditoria de performance e Lighthouse contra URL de produção ou preview. Tenta PageSpeed Insights API primeiro (com ou sem key), com fallback automático para lighthouse local via npx. Output em brain/seo/reports/perf-<date>.md com scores por categoria + recomendações priorizadas. Use após deploy, ou quando o usuário pedir "rodar lighthouse", "auditar performance", "checar pagespeed", "por que o site está lento".
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - WebFetch
----
 
 # /perf-audit
 

@@ -1,11 +1,3 @@
----
-name: keywords-volume
-description: Pesquisa volume de busca, CPC e dificuldade de uma ou múltiplas palavras-chave via DataForSEO Search Volume API. Output triplo (markdown + CSV + JSON) em brain/seo/data/keywords/. Default Brasil/pt-br. Mostra preview de custo antes de chamar (~$0.05/keyword). Use quando o usuário pedir "volume de keyword", "search volume", "CPC", "keyword difficulty", "pesquisar palavra-chave", "DataForSEO keyword", "métricas de keyword". Pilar Dados.
-allowed-tools:
-  - Read
-  - Write
-  - Bash
----
 
 # /keywords-volume — Search Volume API
 

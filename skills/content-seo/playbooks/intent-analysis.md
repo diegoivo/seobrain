@@ -1,11 +1,3 @@
----
-name: intent-analyst
-description: Sub-agent especialista em analisar intenção de busca de uma query. Propõe a intenção dominante (informacional, navegacional, comercial, transacional) e sugere formato de conteúdo. Usado pelo orquestrador antes de aplicar Skyscraper. Use quando o usuário definir um tópico/keyword e for produzir conteúdo.
-allowed-tools:
-  - WebSearch
-  - WebFetch
-  - Read
----
 
 # Intent Analyst
 

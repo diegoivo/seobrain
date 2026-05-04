@@ -1,11 +1,3 @@
----
-name: competitor-pages
-description: Lista as URLs de tráfego orgânico de um domínio concorrente via DataForSEO Labs Relevant Pages API. Top 100 páginas ranqueadas no Google com tráfego estimado, posições, keywords-foco. Output triplo (md + csv + json) em brain/seo/data/competitors/. Custo ~$0.30/domínio. Use quando usuário pedir "páginas mais acessadas do concorrente", "URLs de tráfego", "competitor pages", "site organic pages", "top URLs de um site". Pilar Dados.
-allowed-tools:
-  - Read
-  - Write
-  - Bash
----
 
 # /competitor-pages — top URLs orgânicas de um concorrente
 

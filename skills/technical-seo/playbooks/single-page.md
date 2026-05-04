@@ -1,12 +1,3 @@
----
-name: seo-onpage
-description: Otimização on-page de uma página ou post — URL, headings, intro, recursos visuais, internal linking. Roda checks específicos de uma página em desenvolvimento. Use quando o usuário pedir "otimizar esta página", "revisar SEO on-page", "checar este post antes de publicar".
-allowed-tools:
-  - Read
-  - Write
-  - Grep
-  - WebFetch
----
 
 # SEO On-Page
 

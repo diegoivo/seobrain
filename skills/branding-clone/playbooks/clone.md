@@ -1,12 +1,3 @@
----
-name: site-clone
-description: Clona aspecto visual de site existente via agent-browser. Extrai HTML + computed styles + paleta + fontes + logo + favicon + OG image. Propõe DESIGN.md baseado no extraído. Use quando o usuário tem domínio existente e quer importar visual ("clone diegoivo.com", "importa o site existente", "extrai o design"). Disparada pelo /onboard quando há domínio.
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
----
 
 <!-- WebFetch propositalmente AUSENTE: clone visual exige agent-browser.
      Para baixar assets pontuais já identificados pelo DOM extract

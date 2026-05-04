@@ -1,12 +1,3 @@
----
-name: seo-tecnico
-description: Auditoria técnica de SEO completa. Roda o seo-score script (10 categorias, 100 pts) e gera relatório priorizado em brain/seo/reports/. Cobre indexabilidade, CWV, schema, meta, semântica HTML, internal linking, imagens, conteúdo (Flesch PT-BR), GEO e A11y. Use quando o usuário pedir "auditoria técnica", "rodar SEO técnico", "checar SEO" ou após deploy.
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - WebFetch
----
 
 # SEO Técnico
 

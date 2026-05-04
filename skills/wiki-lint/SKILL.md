@@ -1,6 +1,6 @@
 ---
 name: wiki-lint
-description: Valida o Brain — frontmatter obrigatório nos posts/páginas, índices presentes, freshness de arquivos core (>30 dias warning). Roda scripts/brain-lint.mjs. Use antes de PRs de conteúdo, ou periodicamente para detectar drift.
+description: LLM Wiki lint — validates the project knowledge base (brain/) for required frontmatter on posts/pages, index files present, freshness of core files (>30 days triggers warning), proprietary POVs declared, voice file canonical. Runs scripts/brain-lint.mjs. Use when user asks "lint brain", "validate wiki", "validar brain", "brain check", "wiki integrity check", "drift detection", before content PRs, or periodically to detect knowledge drift. Renamed from /brain-lint (v0.1.0).
 allowed-tools:
   - Bash
   - Read

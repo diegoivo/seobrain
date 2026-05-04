@@ -1,14 +1,3 @@
----
-name: blogpost
-description: Pipeline editorial de 6 etapas explícitas para escrever um blogpost SEO+GEO PT-BR — (1) mapa de termos, (2) análise de concorrentes (skyscraper baseline), (3) consenso vs POV proprietário, (4) headings + meta + slug + faqs, (5) briefing consolidado, (6) escrita. Cada etapa entrega artefato concreto e exige aprovação antes da próxima. Substitui /artigo (mais explícito, mais auditável). Use quando o usuário pedir "escrever blogpost", "novo post", "artigo SEO", "criar conteúdo de blog".
-allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - WebSearch
-  - WebFetch
-  - Grep
----
 
 # /blogpost — pipeline editorial em 6 etapas
 
