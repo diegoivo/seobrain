@@ -8,8 +8,9 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { argv } from "node:process";
+import { requireProjectRoot } from "./lib/project-root.mjs";
 
-const ROOT = process.cwd();
+const ROOT = requireProjectRoot();
 const STRICT = argv.includes("--strict");
 const ERRORS = [];
 const WARNINGS = [];
