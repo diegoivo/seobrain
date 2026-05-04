@@ -12,13 +12,13 @@ LLM Wiki é **substrato**, não pilar paralelo aos outros. Tudo que vem abaixo d
 | `brain/povs/` | 1 arquivo por POV proprietário |
 | `brain/glossario/` | Definições proprietárias, 1 verbete por arquivo |
 | `brain/tecnologia/index.md` | Stack atual; decisão sobre banco de dados |
-| `brain/DESIGN.md` + `DESIGN.tokens.json` | Design system (gerado por `/branding discover`) |
+| `brain/DESIGN.md` + `DESIGN.tokens.json` | Design system (gerado por `/branding discover` ou `/branding import <url>`) |
 | `brain/config.md` | Domínios temporário/definitivo, env, deploy target |
 | `brain/seo/data/` | Dados de pesquisa do Pilar Dados (DataForSEO outputs) |
 | `brain/seo/reports/` | Relatórios SEO Score |
 | `brain/backlog.md` | Pendências, ideias, estado |
 
-Atualizado automaticamente após `/approved` (skill `wiki-update`).
+Atualizado automaticamente após `/approved` (skill `wiki`, playbook update).
 
 ## 2. Branding — design + identidade visual
 
@@ -28,6 +28,9 @@ Atualizado automaticamente após `/approved` (skill `wiki-update`).
 
 Quem importa visual de site existente: `/branding import <url>` extrai tokens + valida fidelidade.
 
+`/branding apply` popula `web/src/app/brandbook/*` (7 rotas vivas) + `globals.css` (cores e fontes apenas — escala/grid/spacing são canônicos do framework). `/branding export` gera `brand/<slug>/brandbook.{md,html,pdf}` para deck/distribuição. `/branding review` é um dos 3 reviewers chamados pelo `/qa`.
+
+
 ## 3. Content SEO — voz BR + skyscraper + GEO
 
 - **Skyscraper default.** Conteúdo informacional supera o melhor concorrente da SERP em ~20% de extensão e profundidade. Modo não-skyscraper só com pedido explícito.
@@ -36,40 +39,41 @@ Quem importa visual de site existente: `/branding import <url>` extrai tokens + 
 - **GEO embutido.** TL;DR (2-3 frases citáveis), FAQs estruturadas (gera FAQPage schema), `Person` schema em autoria, `llms.txt` na raiz.
 - **Linkagem interna.** Antes de publicar, consulta `content/posts/index.md` e `content/site/index.md`.
 
-`/content-seo` faz pipeline editorial completo. `/content-seo-review` valida pós-fato.
+`/content-seo` faz pipeline editorial completo via `playbooks/article.md` ou `playbooks/blogpost.md`. Validação editorial pós-fato via `playbooks/review.md` (chamado direto ou pelo `/qa`).
 
 ## 4. Technical SEO — por construção, não auditoria pós-fato
 
 - **SEO Score** (`scripts/seo-score.mjs`, 10 categorias ponderadas: CWV, indexabilidade, meta, semântica, schema, internal links, imagens, conteúdo, GEO, A11y).
 - **Targets toda página criada:** Lighthouse ≥95 (alvo 100), seo-score ≥90 (alvo 100). São pré-condições do código, não auditoria.
 - **Score nunca bloqueia publicação.** Alerta com recomendações priorizadas. Usuário decide.
-- **Princípio:** se página sai com Lighthouse 82, **o template está errado**, não o caso particular. Não improvisar — copiar de `/website-bestpractices`.
+- **Princípio:** se página sai com Lighthouse 82, **o template está errado**, não o caso particular. Não improvisar — copiar de `/website` references/bestpractices.md.
 
 ## 5. SEO Strategy — planejamento
 
-`/seo-strategy` cobre estratégia em 7 passos: análise de concorrentes, saúde técnica, posicionamento, mapeamento de palavras-chave, topic clusters, linkbait, link building. Use quando o usuário pedir "estratégia de SEO", "plano de SEO", "topic cluster".
+Absorvido em `/technical-seo` (playbook strategy). Cobre estratégia em 7 passos: análise de concorrentes, saúde técnica, posicionamento, mapeamento de palavras-chave, topic clusters, linkbait, link building. Use quando o usuário pedir "estratégia de SEO", "plano de SEO", "topic cluster".
 
 ## 6. SEO Data — research empacotado
 
 `/seo-data` via DataForSEO (Pay-as-you-go, custos transparentes em `references/dataforseo-cost-table.md`):
 
-- Search Volume API — volume + CPC + dificuldade (~$0.05/keyword)
-- Relevant Pages API — top 100 URLs orgânicas (~$0.30/domínio)
-- Ranked Keywords API — top 100 keywords ranqueadas (~$0.30/domínio)
+- Search Volume API — volume + CPC + dificuldade (~$0.05/keyword) → `playbooks/keywords-volume.md`
+- Relevant Pages API — top 100 URLs orgânicas (~$0.30/domínio) → `playbooks/competitor-pages.md`
+- Ranked Keywords API — top 100 keywords ranqueadas (~$0.30/domínio) → `playbooks/competitor-keywords.md`
+- Setup interativo de credenciais → `playbooks/config.md` (form local em 127.0.0.1, valida via endpoint gratuito, grava `.env.local`).
 
-Skills auxiliares do mesmo pilar:
-- `/dataforseo-config` — setup interativo de credenciais via form local (porta aleatória em 127.0.0.1, valida via endpoint gratuito, grava `.env.local`).
+Skills independentes do mesmo pilar:
+- `/gsc-google-search-console` — dados reais e gratuitos do próprio site (top queries, top páginas, oportunidades).
 - `/rank-tracker` — monitor de posições orgânicas no Google. Sub-comandos `add` / `remove` / `list` / `update` / `history`. 3 modos com trade-offs claros entre tempo e custo (batch async high default, batch async normal opt-in, live síncrono opt-in). Storage híbrido: `keywords.json` (config) + SQLite (snapshots time-series, `node:sqlite` nativo) + reports md/csv/json.
 
 Todas: cost preview obrigatório, locale BR/pt-br default, output triplo (`.md` + `.csv` + `.json`).
 
-**Roadmap v0.2.0:** abstração de provider (`KeywordProvider` interface) para suportar Google Search Console (free), GA4, attribution.
+**Roadmap v0.2.0:** abstração de provider (`KeywordProvider` interface) para suportar GA4 e attribution.
 
 ## Tecnologia (transversal)
 
 - **Default:** Next.js SSG puro, sem banco, sem CMS. Conteúdo em `/content/*.md`. Pré-renderização sempre que possível.
 - **Vercel é plataforma padrão.** Serviços externos vêm do **Vercel Marketplace**.
 - **Stack:** Next.js (App Router, SSG), shadcn/ui, Tailwind v4. Tipografia perfect fourth (1.333), line-height 1.7, measure 65ch.
-- **CMS sob gatilho:** Adicione Payload CMS + Neon Postgres apenas quando: ≥100 páginas dinâmicas em 3 meses, OU editor não-técnico publicando, OU UI de edição comprovada. Skill `/website-cms` faz bolt-on.
+- **CMS sob gatilho:** Adicione Payload CMS + Neon Postgres apenas quando: ≥100 páginas dinâmicas em 3 meses, OU editor não-técnico publicando, OU UI de edição comprovada. Skill `/website` (cms playbook) faz bolt-on.
 - **Pipeline:** `Think → Plan → Build → Test → Ship → Document`. Tarefas não-triviais começam por `/plan`. Build com sub-agents paralelos + `/qa` orquestrador. Loop limitado a 3 rodadas.
 - **Ship:** `/ship` orquestra commit → push → preview → smoke pre-merge → confirmação → merge main → smoke prod.

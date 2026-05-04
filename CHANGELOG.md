@@ -4,7 +4,7 @@ Todas as mudanças notáveis no SEO Brain. Segue [Keep a Changelog](https://keep
 
 ## [0.2.0] — 2026-05-04
 
-**Consolidação total das skills de branding em uma única `/branding`.**
+**Consolidação total das skills de branding em uma única `/branding`** (rebuild dedicado prometido na 0.1.5).
 
 ### BREAKING CHANGES
 
@@ -14,7 +14,7 @@ Todas as mudanças notáveis no SEO Brain. Segue [Keep a Changelog](https://keep
 
 ### Added
 
-- **Skill `/branding`** consolidada com 7 modos.
+- **Skill `/branding`** consolidada com 7 modos (segue padrão progressive disclosure da 0.1.5).
 - **Modo `export`** (novo) — gera `brand/<slug>/brandbook.md/.html/.pdf` (puppeteer-core + Chrome do sistema).
 - **Modo `list`** (novo) — lista marcas em `brain/`, `projects/<slug>/brain/` e exportadas em `brand/`.
 - **References maduras** em `skills/branding/references/`: brand-archetypes (12 Mark & Pearson), color-system, typography-guide, audit-checklist, web-interface-guidelines, brandbook-format.
@@ -24,6 +24,47 @@ Todas as mudanças notáveis no SEO Brain. Segue [Keep a Changelog](https://keep
 ### Migration
 
 Cheat sheet em `MIGRATION.md`. Funcionalidades preservadas 1:1; `discover` herda anti-AI-slop + primeiro-viewport; `import` herda multi-fase + perguntas de fidelidade bloqueantes.
+
+## [0.1.5] — 2026-05-04
+
+**Consolidação de pacotes via progressive disclosure (27→11 skills, –59%).**
+
+### BREAKING CHANGES
+
+- **Skill names consolidados por pilar.** Cada pacote vira uma única skill com `SKILL.md` (router) + `playbooks/` (procedimentos) + `references/` (conhecimento sob demanda). Triggers antigos preservados na description da skill consolidada.
+- **Pacote `branding-*` removido temporariamente.** Outra branch trata o rebuild dedicado (entregue em 0.2.0).
+
+### Renames
+
+| Antes (skills antigas) | Depois (skill + playbook) |
+|---|---|
+| `/wiki-init` `/wiki-update` `/wiki-lint` | `/wiki` (init / update / lint) |
+| `/content-seo` `/content-seo-review` | `/content-seo` (article / blogpost / intent-analysis / review) |
+| `/technical-seo` `/seo-strategy` | `/technical-seo` (full-audit / single-page / images / performance / strategy) |
+| `/seo-data` `/dataforseo-config` | `/seo-data` (keywords-volume / competitor-pages / competitor-keywords / config) |
+| `/website-create` `/website-bestpractices` `/website-cms` `/website-domain` `/website-email` `/website-qa` | `/website` (create / domain / email / cms / qa + references/bestpractices.md + snippets/) |
+
+### Removed
+
+- 16 SKILL.md duplicados (consolidados nos routers acima).
+- 6 skills `branding-*` (rebuild em outra branch — reintegrado em 0.2.0).
+
+### Kept standalone
+
+- `/seobrain` (entry framework), `/plan`, `/qa`, `/ship`, `/approved`
+- `/rank-tracker`, `/gsc-google-search-console` (Pilar Dados, escopo independente)
+
+### Token impact
+
+- Skill list (descriptions sempre carregadas pelo Claude scanner) cai de ~8KB para ~3KB.
+- Quando uma skill é "ativada", carrega 1 playbook (~2KB) em vez da SKILL.md inteira de cada irmã.
+
+### Validation
+
+- `npm run validate`: 11 skills, 0 errors, 0 warnings esperados.
+- Refs cruzadas atualizadas: `seobrain/SKILL.md`, `qa/SKILL.md`, `ship/SKILL.md`, `commands/`, `hooks/session-start.mjs`.
+- `tests/prompts.jsonl` reescrito (26 prompts, novos nomes), `tests/critical-prompts.jsonl` ajustado.
+- `package.json` versão `0.1.5`, `plugin.json` description atualizada (count 11).
 
 ## [0.1.0] — 2026-05-04
 

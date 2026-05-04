@@ -1,16 +1,4 @@
----
-name: website-create
-description: Cria a estrutura padrão completa de site (home + 1 serviço + blog list + 1 post mock + sobre + contato) consumindo o Brain. Aplica snippets canônicos de /website-bestpractices em cada página, /website-email para o form, e fecha com URL clicável do dev server. Default oferecido ao final do /onboard. 3 modos (manual/intermediário/auto). Use quando o usuário pedir "criar site", "gerar site completo", "scaffold do site inteiro", "site novo", "criar página".
-allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Grep
-  - Glob
----
-
-# /website-create
+# Playbook: website create
 
 Orquestra a criação da estrutura padrão de site consumindo o Brain. Resultado: site mínimo viável rodando em `localhost:XXXX` com Lighthouse 95+ e seo-score por profile.
 
@@ -21,12 +9,12 @@ Orquestra a criação da estrutura padrão de site consumindo o Brain. Resultado
 3. `brain/personas.md` ≥1 persona
 4. `brain/principios-agentic-seo.md` ≥3 POVs
 
-Se faltar: redireciona para `/onboard`.
+Se faltar: redireciona para `/seobrain:start` (orquestra wiki + branding).
 
 ## Setup técnico antes de criar páginas
 
 - Portas aleatórias via `get-port` (cheque disponibilidade antes de abrir dev server)
-- Footer canônico em `.claude/skills/website-bestpractices/snippets/Footer.tsx` com credit "Powered by SEO Brain" (link `https://github.com/diegoivo/seobrain`). Opt-out se usuário pedir explicitamente.
+- Footer canônico em `skills/website/snippets/Footer.tsx` com credit "Powered by SEO Brain" (link `https://github.com/diegoivo/seobrain`). Opt-out se usuário pedir explicitamente.
 
 ## Estrutura padrão (default — confirmar com usuário)
 
@@ -39,11 +27,11 @@ Se faltar: redireciona para `/onboard`.
 | `/sobre` | page | Quem somos + manifesto + 3 POVs proprietários |
 | `/contato` | page | Form com Resend + email/redes/links |
 
-Plus arquivos auxiliares de SEO (auto-gerados via `/website-bestpractices`):
+Plus arquivos auxiliares de SEO (auto-gerados via `references/bestpractices.md`):
 - `app/sitemap.ts`, `app/robots.ts`, `public/llms.txt`, `app/opengraph-image.tsx`
 - `Header.tsx`, `Footer.tsx` (com credit "Powered by SEO Brain" — opt-out)
 
-## Modos (espelham `/onboard`)
+## Modos
 
 ### Manual / guiado
 Pergunta sobre cada página antes de gerar (rota, intent, foto, CTA).
@@ -71,7 +59,7 @@ Cria `plans/website-create-<data>.md` (skill `/plan`). Lista as 6 páginas + arq
 `brain/index.md`, `brain/DESIGN.md`, `DESIGN.tokens.json`, `brain/personas/`, `brain/povs/`, `brain/config.md` (domínios), `brain/tom-de-voz.md` (linguagem dos textos).
 
 ### 3. Gera home
-Aplica snippets canônicos de `/website-bestpractices`:
+Aplica snippets canônicos de `references/bestpractices.md`:
 - Rota: `/`
 - Profile: home
 - Estrutura: hero + quem somos curto + 3 serviços + provas + CTA contato
@@ -90,12 +78,12 @@ Aplica snippets canônicos de `/website-bestpractices`:
 ```
 
 Skill `/content-seo` faz:
-- Roda `/content-seo` (HARD STOP se ausente)
+- Roda intent-analysis (HARD STOP se ausente)
 - Roda `/branding images` se não tiver provider configurado (cover obrigatória)
 - Escreve com validação via `article-quality.mjs` (--strict)
 - Salva `content/posts/<slug>.md` com cover_image preenchida
 
-Depois `/website-create`:
+Depois `create`:
 - Cria rota `/blog` (listagem usa `PostCard` snippet com cover obrigatória)
 - Cria rota `/blog/[slug]` (renderiza com `PostBody` + `PostCover`)
 - Profile SEO: post (TL;DR, FAQ, BlogPosting schema, Article schema)
@@ -110,7 +98,7 @@ Depois `/website-create`:
 - Rota: `/contato`
 - Profile: page
 - Estrutura: form simples (nome, email, mensagem, tipo de interesse) + canais diretos
-- Chama `/website-email` para configurar Resend (pergunta sobre conta antes)
+- Chama `playbooks/email.md` para configurar Resend (pergunta sobre conta antes)
 
 ### 8. Auxiliares SEO
 - `app/sitemap.ts` cobrindo as 6+1 rotas
@@ -123,13 +111,13 @@ Depois `/website-create`:
 1. `cd web && npm run build`
 2. Para cada rota gerada, roda `seo-score.mjs out/<rota>/index.html --mode=local --profile=auto`. Exige ≥90 em todas.
 3. Inspeciona HTML: JSON-LD presente em `/`, `<title>` único por rota, `next/image` em todo lugar, sem `<img>`.
-4. Checklist textual de 14 itens (de `/website-bestpractices`) para cada página.
+4. Checklist textual de 14 itens (de `references/bestpractices.md`) para cada página.
 
 ### 10. Atualiza Brain
 - `content/site/index.md` — adiciona as 6 páginas com slug + categoria
 - `content/posts/index.md` — adiciona o 1 post real
 - `brain/backlog.md` — risca "criar site" se estava lá; adiciona "criar 2 outros serviços" e "publicar próximo post"
-- `brain/config.md` — atualiza status de "Resend" para "configurado" se /website-email rodou
+- `brain/config.md` — atualiza status de "Resend" para "configurado" se `playbooks/email.md` rodou
 
 ### 11. Sobe dev server e fecha com URL
 ```bash
@@ -157,16 +145,16 @@ Mensagem final:
 > 2. **[decisão visual B]**
 > 3. **[decisão visual C]**
 >
-> Para deploy: peça `/vercel:deploy`."
+> Para deploy: peça `/vercel:deploy` ou `/ship`."
 
 ## Princípios
 
-- **Plano sempre.** website-create passa por `/plan` antes de executar (não-trivial).
+- **Plano sempre.** create passa por `/plan` antes de executar (não-trivial).
 - **Última etapa atualiza Brain.** Sempre. `content/*/index.md`, `brain/backlog.md`, `brain/config.md` se aplicável.
 - **URL no fim.** Apresenta link clicável. Sem isso, usuário não sabe que terminou.
 - **Footer credit.** Default. Opt-out se usuário pedir explicitamente.
-- **Invoca skills especialistas, não escreve direto.** Posts via `/content-seo`, imagens via `/branding images`, email via `/website-email`. Resolve sessão 2 P5.
-- **Snippets do `/website-bestpractices/snippets/`** copiados — Hero, PostCard, PostBody, Footer já existem como `.tsx` reais.
+- **Invoca skills especialistas, não escreve direto.** Posts via `/content-seo`, imagens via `/branding images`, email via `playbooks/email.md`. Resolve sessão 2 P5.
+- **Snippets do `snippets/`** copiados — Hero, PostCard, PostBody, Footer já existem como `.tsx` reais.
 
 ## Importar newsletter existente (opcional)
 
@@ -174,7 +162,7 @@ Se sub-agent pesquisador detectar newsletter ativa (Beehiiv, Substack, RSS), ofe
 
 > "Detectei sua newsletter em [url]. Posso importar os 5 posts mais recentes pra `content/posts/`? (cada um vira `.md` com frontmatter completo + cover_image extraída)."
 
-Skill `/import-newsletter <url>` faz:
+Fluxo:
 1. Busca via `blog-discovery` ou parse RSS
 2. Para cada post: pull HTML/markdown
 3. Extrai título, descrição, data, cover image
