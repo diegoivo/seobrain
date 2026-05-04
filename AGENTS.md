@@ -131,13 +131,15 @@ Quem importa visual de site existente: `/site-clone` extrai tokens, `/clone-fide
 
 ### 3.6 Pesquisa & Dados — research empacotado
 
-3 skills via DataForSEO (Pay-as-you-go, custos transparentes em `.env.example`):
+5 skills via DataForSEO (Pay-as-you-go, custos transparentes em `.env.example`):
 
+- `/dataforseo-config` — setup interativo de credenciais via form local (porta aleatória em 127.0.0.1, valida via endpoint gratuito, grava `.env.local`)
 - `/keywords-volume` — volume + CPC + dificuldade de 1 ou N keywords (~$0.05/keyword)
 - `/competitor-pages` — top 100 URLs orgânicas de um domínio (~$0.30/domínio)
 - `/competitor-keywords` — top 100 keywords ranqueadas de um domínio (~$0.30/domínio)
+- `/rank-tracker` — monitor de posições orgânicas (batch async SERP, depth=200 max desde Set/2025, ~$0.00915/keyword)
 
-Todas: cost preview obrigatório, locale BR/pt-br default, output triplo (`.md` + `.csv` + `.json`) em `brain/seo/data/`. Credenciais em `.env.local`.
+Todas: cost preview obrigatório, locale BR/pt-br default, output triplo (`.md` + `.csv` + `.json`) em `brain/seo/data/`. Credenciais em `.env.local` (use `/dataforseo-config` pra setup).
 
 **Roadmap v2:** abstração de provider (`KeywordProvider` interface) para suportar Google Search Console (free), GA4, attribution. Hoje DataForSEO é provider concreto único.
 
@@ -150,7 +152,7 @@ Todas: cost preview obrigatório, locale BR/pt-br default, output triplo (`.md` 
 | **Conteúdo** | `/blogpost`, `/artigo`, `/intent-analyst`, `/qa-content`, `/setup-images` |
 | **Tecnologia** | `/site-criar`, `/web-best-practices`, `/setup-email`, `/add-cms`, `/plano`, `/qa`, `/qa-design`, `/qa-tech`, `/seobrain-ship`, `/setup-domain` |
 | **SEO Técnico** | `/seo-tecnico`, `/seo-onpage`, `/seo-estrategia`, `/seo-imagens`, `/perf-audit`, `/geo-checklist` |
-| **Pesquisa & Dados** | `/keywords-volume`, `/competitor-pages`, `/competitor-keywords` |
+| **Pesquisa & Dados** | `/dataforseo-config`, `/keywords-volume`, `/competitor-pages`, `/competitor-keywords`, `/rank-tracker` |
 
 ### Como invocar em diferentes harnesses
 
