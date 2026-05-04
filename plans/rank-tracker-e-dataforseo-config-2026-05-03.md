@@ -139,3 +139,19 @@ Ambas vivem no framework root (`.claude/skills/`) e ficam disponíveis em todos 
 - E2E real do `update` (precisa credenciais DataForSEO).
 - Brain do projeto-template (`brain/seo/index.md`) não foi atualizado — pode entrar quando o usuário rodar `/aprovado` (a skill `/update-brain` cuida).
 - Skill `/loop` poderia agendar `/rank-tracker update --no-confirm` semanal (mencionado no SKILL.md como futuro).
+
+## Refatoração 2026-05-04: snapshots em SQLite
+
+**Motivação.** O usuário questionou: "onde vamos salvar as posições? Não seria melhor sqlite?" — questão fundamental. Rank tracker é **time-series**; JSON datado funciona pra `/keywords-volume` (one-shot) mas é wrong shape pra "como variou nas últimas 4 semanas". Em JSON-por-dia, qualquer agregação carrega N arquivos. Em SQLite, vira `SELECT`.
+
+**Mudanças.**
+- Novo módulo `scripts/lib/rank-tracker-db.mjs` com `node:sqlite` nativo (zero deps), schema único `snapshots` com `PRIMARY KEY (date, keyword)` (idempotência diária sai de graça via `INSERT OR REPLACE`), índices em `(keyword, date)` e `(date)`.
+- `rank-tracker.mjs` deixa de gravar `history/<date>.json`; passa a usar `history.db`. `cmdList`/`cmdHistory`/`cmdUpdate` viram queries.
+- `keywords.json` (config) **continua** em JSON — humano-legível, editável, em PR diff. Brain segue navegável pra config; queries são detalhe de implementação.
+- Reports `<date>.{md,csv,json}` continuam em `reports/` — derivados consumíveis.
+- `engines.node` no framework root e template subiu pra `>=22.13` (requisito do `node:sqlite` estável). `.nvmrc` já estava em 24.
+- Suprime `ExperimentalWarning` específico do SQLite (ainda RC em Node 24.x), sem mascarar outros warnings.
+
+**Validação.** Smoke test em projeto throwaway: add → list (sem snapshots) → injeta 2 snapshots de teste via lib direta → list mostra delta correto (+3 / −10 / nova) → history retorna série temporal ordenada → re-upsert mesma `(date, keyword)` sobrescreve sem duplicar. Tudo em Node 22.22.
+
+**Trade-off aceito.** SQLite no Brain quebra parcialmente "Brain text-first". Mitigação: `keywords.json` (config) e `reports/*.md` (saídas humanas) cobrem o caminho do humano. `history.db` é storage de queries, não de leitura direta.

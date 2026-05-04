@@ -16,7 +16,7 @@
 //   brain/seo/data/rank-tracker/history/<YYYY-MM-DD>.json
 //   brain/seo/data/rank-tracker/reports/<YYYY-MM-DD>.{md,csv,json}
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
@@ -24,10 +24,8 @@ import {
   taskPost,
   pollTasksReady,
   fetchTaskResult,
-  validateCredentials,
   loadCredentials,
   defaultLocale,
-  estimateCost,
   printCostPreview,
   pLimit,
   rowsToCsv,
@@ -36,11 +34,20 @@ import {
   DataForSEOError,
 } from "./dataforseo-client.mjs";
 import { requireProjectRoot } from "./lib/project-root.mjs";
+import {
+  openDb,
+  upsertSnapshotBatch,
+  getSnapshot,
+  getPreviousSnapshot,
+  getKeywordHistory,
+  getLatestPositionByKeyword,
+  listSnapshotDates,
+} from "./lib/rank-tracker-db.mjs";
 
 const ROOT = requireProjectRoot();
 const DATA_DIR = join(ROOT, "brain", "seo", "data", "rank-tracker");
 const KEYWORDS_FILE = join(DATA_DIR, "keywords.json");
-const HISTORY_DIR = join(DATA_DIR, "history");
+const DB_FILE = join(DATA_DIR, "history.db");
 const REPORTS_DIR = join(DATA_DIR, "reports");
 const SE_PATH = "serp/google/organic";
 const DEPTH = 200;
@@ -129,17 +136,6 @@ function ensureKeywordsFile() {
   return data;
 }
 
-function listSnapshots() {
-  if (!existsSync(HISTORY_DIR)) return [];
-  return readdirSync(HISTORY_DIR)
-    .filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
-    .sort();
-}
-
-function loadSnapshot(filename) {
-  return readJson(join(HISTORY_DIR, filename), null);
-}
-
 async function confirm(prompt) {
   const rl = createInterface({ input: stdin, output: stdout });
   const answer = await rl.question(prompt);
@@ -211,13 +207,15 @@ function cmdList() {
     console.log("Nenhuma keyword monitorada. Use: rank-tracker add \"sua keyword\"");
     return;
   }
-  const snapshots = listSnapshots();
-  const last = snapshots.length ? loadSnapshot(snapshots[snapshots.length - 1]) : null;
-  const prev = snapshots.length > 1 ? loadSnapshot(snapshots[snapshots.length - 2]) : null;
+  const db = openDb(DB_FILE);
+  const dates = listSnapshotDates(db);
+  const last = dates.length ? getSnapshot(db, dates[dates.length - 1]) : null;
+  const prev = dates.length > 1 ? getSnapshot(db, dates[dates.length - 2]) : null;
+  db.close();
 
   console.log(`\nTarget: ${data.target_domain ?? "(não configurado)"}`);
   console.log(`Locale: ${data.locale.location_code} / ${data.locale.language_code}`);
-  console.log(`Snapshots: ${snapshots.length}${last ? ` (último: ${last.date})` : ""}\n`);
+  console.log(`Snapshots: ${dates.length}${last ? ` (último: ${last.date})` : ""}\n`);
 
   const lastByKw = new Map((last?.results ?? []).map(r => [r.keyword.toLowerCase(), r]));
   const prevByKw = new Map((prev?.results ?? []).map(r => [r.keyword.toLowerCase(), r]));
@@ -229,7 +227,7 @@ function cmdList() {
     const prevR = prevByKw.get(k.keyword.toLowerCase());
     const pos = lastR?.position ?? null;
     const prevPos = prevR?.position ?? null;
-    const delta = pos != null && prevPos != null ? prevPos - pos : null; // positivo = subiu
+    const delta = pos != null && prevPos != null ? prevPos - pos : null;
     const posStr = pos == null ? "—" : String(pos);
     const deltaStr = delta == null ? "—" : delta > 0 ? `+${delta}` : delta < 0 ? `${delta}` : "0";
     const url = lastR?.url ? lastR.url.slice(0, 40) : "";
@@ -239,25 +237,29 @@ function cmdList() {
 }
 
 function cmdHistory(input) {
-  const targetKw = String(input).trim().toLowerCase();
+  const targetKw = String(input).trim();
   if (!targetKw) {
     console.error("Uso: rank-tracker history \"sua keyword\"");
     process.exit(1);
   }
-  const snapshots = listSnapshots();
-  if (!snapshots.length) {
+  if (!existsSync(DB_FILE)) {
     console.log("Sem histórico ainda. Rode: rank-tracker update");
+    return;
+  }
+  const db = openDb(DB_FILE);
+  const rows = getKeywordHistory(db, targetKw);
+  db.close();
+  if (!rows.length) {
+    console.log(`\nSem histórico para "${targetKw}".`);
     return;
   }
   console.log(`\nSérie temporal: "${targetKw}"\n`);
   console.log("Data".padEnd(12), "Pos".padStart(5), "URL");
   console.log("─".repeat(80));
-  for (const file of snapshots) {
-    const snap = loadSnapshot(file);
-    const r = snap.results.find(x => x.keyword.toLowerCase() === targetKw);
-    const pos = r?.position ?? null;
-    const url = r?.url ? r.url.slice(0, 60) : "";
-    console.log(snap.date.padEnd(12), (pos == null ? "—" : String(pos)).padStart(5), url);
+  for (const r of rows) {
+    const pos = r.position ?? null;
+    const url = r.url ? r.url.slice(0, 60) : "";
+    console.log(r.date.padEnd(12), (pos == null ? "—" : String(pos)).padStart(5), url);
   }
   console.log("");
 }
@@ -375,25 +377,37 @@ async function cmdUpdate(flags) {
     }
   });
 
-  // Snapshot
+  // Snapshot — persiste em SQLite (idempotente por (date, keyword))
   const date = todayStamp();
-  const snapshot = {
+  const fetchedAt = new Date().toISOString();
+  const costUsd = Number(totalCost.toFixed(4));
+  const db = openDb(DB_FILE);
+  const prevSnap = getPreviousSnapshot(db, date);
+  const rows = results.map(r => ({
     date,
-    fetched_at: new Date().toISOString(),
+    keyword: r.keyword,
+    position: r.position,
+    url: r.url,
+    title: r.title,
+    in_top_100: r.in_top_100 ?? null,
+    results_count: r.results_count ?? null,
+    error: r.error ?? null,
+    fetched_at: fetchedAt,
     target_domain: targetDomain,
-    locale: data.locale,
     depth: DEPTH,
-    cost_usd: Number(totalCost.toFixed(4)),
-    results,
-  };
-  const snapshotPath = join(HISTORY_DIR, `${date}.json`);
-  writeJson(snapshotPath, snapshot);
-  console.log(`[rank-tracker] snapshot salvo: ${snapshotPath}`);
+    cost_usd: costUsd,
+  }));
+  upsertSnapshotBatch(db, rows);
+  const snapshot = getSnapshot(db, date);
+  // anexa metadata pros reports (não fica na tabela — vem do contexto da call)
+  snapshot.fetched_at = fetchedAt;
+  snapshot.target_domain = targetDomain;
+  snapshot.locale = data.locale;
+  snapshot.depth = DEPTH;
+  snapshot.cost_usd = costUsd;
+  db.close();
+  console.log(`[rank-tracker] snapshot persistido em ${DB_FILE} (date=${date}, ${rows.length} rows)`);
 
-  // Diff vs último snapshot anterior cronologicamente
-  const allSnaps = listSnapshots().filter(f => f !== `${date}.json`);
-  const prevFile = allSnaps[allSnaps.length - 1] ?? null;
-  const prevSnap = prevFile ? loadSnapshot(prevFile) : null;
   const diff = computeDiff(prevSnap, snapshot);
 
   // Triple report output

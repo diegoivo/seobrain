@@ -4,6 +4,9 @@
   "description": "SEO Brain — framework experimental de SEO Agêntico. Brain (LLM Wiki Karpathy-style) + Brandbook visual + Conteúdo + SEO técnico por construção.",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
   "bin": {
     "seobrain": "scripts/bootstrap.mjs"
   },

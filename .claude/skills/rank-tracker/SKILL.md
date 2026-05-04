@@ -33,18 +33,37 @@ Flags em `update`:
 2. **Target domain.** Lê `brain/config.md` campo "Domínio Definitivo" (fallback: temporário Vercel). Sem nenhum dos dois: aceita via `--domain=`.
 3. **Projeto ativo.** Rodar de `projects/<nome>/`.
 
-## Storage
+## Storage (híbrido: JSON config + SQLite time-series)
 
 ```
 brain/seo/data/rank-tracker/
-├── keywords.json              # lista monitorada (single source of truth)
-├── history/
-│   └── 2026-05-03.json        # snapshot por dia (idempotente: roda 2× sobrescreve)
+├── keywords.json     # lista monitorada (humano-legível, editável, em PR diff)
+├── history.db        # SQLite com snapshots (time-series, queries instantâneas)
 └── reports/
-    ├── 2026-05-03.md          # diff humano por bucket
-    ├── 2026-05-03.csv         # planilha plana
-    └── 2026-05-03.json        # estruturado (automação)
+    ├── 2026-05-03.md   # diff humano por bucket
+    ├── 2026-05-03.csv  # planilha plana
+    └── 2026-05-03.json # estruturado (automação)
 ```
+
+**Por que SQLite e não JSON datado.** Rank tracker é fundamentalmente time-series — o valor está em "como mudou ao longo de N semanas". Em JSON-por-dia, responder "qual a posição média das últimas 4 semanas?" significa abrir 4 arquivos e agregar em memória. Em SQLite vira `SELECT AVG(position) WHERE keyword = ? AND date >= ?`. Idempotência diária sai de graça via `PRIMARY KEY (date, keyword)` + `INSERT OR REPLACE`.
+
+**Por que `keywords.json` continua em JSON.** É configuração, não série temporal. Humano edita, vê em PR diff, entende em 5 segundos. Brain segue navegável sem ter que abrir DB.
+
+**Por que SQLite no Brain.** `history.db` ~260KB/ano por 50 keywords semanais — versionável. Reports markdown/csv são derivados consumíveis pelo humano. Brain segue sendo wiki text-first; SQLite é detalhe de implementação.
+
+**Schema** (`scripts/lib/rank-tracker-db.mjs`):
+```sql
+CREATE TABLE snapshots (
+  date TEXT, keyword TEXT, position INTEGER, url TEXT, title TEXT,
+  in_top_100 INTEGER, results_count INTEGER, error TEXT,
+  fetched_at TEXT, target_domain TEXT, depth INTEGER, cost_usd REAL,
+  PRIMARY KEY (date, keyword)
+);
+CREATE INDEX idx_keyword_date ON snapshots(keyword COLLATE NOCASE, date);
+CREATE INDEX idx_date ON snapshots(date);
+```
+
+**Stack:** `node:sqlite` nativo (Node ≥22.13, zero deps). `engines` no `package.json` garante. WAL mode habilitado.
 
 `keywords.json`:
 ```json
@@ -74,8 +93,8 @@ brain/seo/data/rank-tracker/
 5. **Polling** em `GET /v3/serp/google/organic/tasks_ready` (10s entre polls, timeout 5min).
 6. **Fetch resultados** em `GET /v3/serp/google/organic/task_get/advanced/{id}` (concorrência 5).
 7. **Match de domínio:** normaliza (strip protocol/www/trailing slash/lowercase). Aceita subdomínios por padrão; `--strict-subdomain` desliga.
-8. **Snapshot** em `history/<YYYY-MM-DD>.json`. Sobrescreve se mesmo dia (idempotente).
-9. **Diff vs snapshot anterior cronológico** (último arquivo em `history/` que não seja hoje). Buckets:
+8. **Snapshot** persistido em `history.db` via `INSERT OR REPLACE`. Idempotente por `(date, keyword)`: rodar 2× no mesmo dia sobrescreve, não duplica.
+9. **Diff vs snapshot anterior cronológico** via `SELECT MAX(date) WHERE date < ?`. Buckets:
    - `entered_top_10` — entrou no top 10
    - `improved` — subiu de posição (sem cruzar top 10)
    - `unchanged` — mesma posição
