@@ -2,16 +2,12 @@
 // PreToolUse hook — diferencia mudanças auto vs com confirmação.
 // Lê o input JSON do hook via stdin, decide aprovar ou pedir confirmação.
 // Nunca bloqueia (exit 0 sempre). Falhas silenciosas para não poluir log.
+//
+// Cobre 2 categorias:
+// 1. Write/Edit em paths críticos (package.json, migrations, settings, etc).
+// 2. Bash com comandos de risco (git merge|push em main, rm -rf, etc).
 
 import { readFileSync } from "node:fs";
-
-const AUTO_PATHS = [
-  /^brain\//,
-  /^content\/.*\/_template\.md$/,
-  /^content\/(posts|site)\/.*\.md$/,
-  /^plans\//,
-  /^\.cache\//,
-];
 
 const CONFIRM_PATHS = [
   /^package\.json$/,
@@ -21,12 +17,21 @@ const CONFIRM_PATHS = [
   /^web\/payload\.config\./,
   /^\.github\//,
   /^\.claude\/settings\.json$/,
+  /^\.env(\.|$)/,
+];
+
+const DANGEROUS_BASH = [
+  { regex: /\bgit\s+(merge|rebase)\b.*\b(main|master)\b/, label: "merge/rebase em main" },
+  { regex: /\bgit\s+push\b[^&|;]*\b(main|master)\b/, label: "push direto em main" },
+  { regex: /\bgit\s+push\b.*--force/, label: "force push" },
+  { regex: /\bgit\s+reset\b.*--hard/, label: "git reset --hard" },
+  { regex: /\brm\s+-rf?\s+(\/|~|\$HOME)/, label: "rm -rf em path crítico" },
+  { regex: /\bvercel\s+(--prod|deploy.*--prod)/, label: "deploy direto a produção Vercel" },
 ];
 
 (async function main() {
   let input = "";
   try {
-    // Lê stdin se houver. Fallback silencioso.
     input = readFileSync(0, "utf8");
   } catch {
     return;
@@ -38,6 +43,20 @@ const CONFIRM_PATHS = [
   try {
     payload = JSON.parse(input);
   } catch {
+    return;
+  }
+
+  const toolName = payload?.tool_name ?? "";
+
+  if (toolName === "Bash") {
+    const command = payload?.tool_input?.command ?? "";
+    if (!command) return;
+    for (const { regex, label } of DANGEROUS_BASH) {
+      if (regex.test(command)) {
+        console.error(`⚠️  Comando de risco detectado (${label}). Confirme com o usuário antes de executar.`);
+        return;
+      }
+    }
     return;
   }
 
