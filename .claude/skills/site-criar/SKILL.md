@@ -1,6 +1,6 @@
 ---
 name: site-criar
-description: Cria a estrutura padrão completa de site (home + 1 serviço + blog list + 1 post mock + sobre + contato) consumindo o Brain. Roda /scaffold-page para cada página, /setup-email para o form, e fecha com URL clicável do dev server. Default oferecido ao final do /onboard. 3 modos (manual/intermediário/auto). Use quando o usuário pedir "criar site", "gerar site completo", "scaffold do site inteiro", "site novo".
+description: Cria a estrutura padrão completa de site (home + 1 serviço + blog list + 1 post mock + sobre + contato) consumindo o Brain. Aplica snippets canônicos de /web-best-practices em cada página, /setup-email para o form, e fecha com URL clicável do dev server. Default oferecido ao final do /onboard. 3 modos (manual/intermediário/auto). Use quando o usuário pedir "criar site", "gerar site completo", "scaffold do site inteiro", "site novo", "criar página".
 allowed-tools:
   - Read
   - Write
@@ -16,14 +16,17 @@ Orquestra a criação da estrutura padrão de site consumindo o Brain. Resultado
 
 ## Pré-condições (HARD GATE)
 
-Igual a `/scaffold-page`:
-
 1. `brain/index.md` `kit_state: initialized`
 2. `brain/DESIGN.md` + `DESIGN.tokens.json` preenchidos
 3. `brain/personas.md` ≥1 persona
 4. `brain/principios-agentic-seo.md` ≥3 POVs
 
 Se faltar: redireciona para `/onboard`.
+
+## Setup técnico antes de criar páginas
+
+- Portas aleatórias via `get-port` (cheque disponibilidade antes de abrir dev server)
+- Footer canônico em `.claude/skills/web-best-practices/snippets/Footer.tsx` com credit "Powered by SEO Brain" (link `https://github.com/diegoivo/seobrain`). Opt-out se usuário pedir explicitamente.
 
 ## Estrutura padrão (default — confirmar com usuário)
 
@@ -38,7 +41,7 @@ Se faltar: redireciona para `/onboard`.
 
 Plus arquivos auxiliares de SEO (auto-gerados via `/web-best-practices`):
 - `app/sitemap.ts`, `app/robots.ts`, `public/llms.txt`, `app/opengraph-image.tsx`
-- `Header.tsx`, `Footer.tsx` (com credit "Powered by Agentic SEO" — opt-out)
+- `Header.tsx`, `Footer.tsx` (com credit "Powered by SEO Brain" — opt-out)
 
 ## Modos (espelham `/onboard`)
 
@@ -65,10 +68,10 @@ Decide tudo com base no brain. Mostra resumo de páginas que vão ser criadas e 
 Cria `plans/site-criar-<data>.md` (skill `/plano`). Lista as 6 páginas + arquivos auxiliares + critérios FE/BE + última etapa atualizar Brain.
 
 ### 2. Lê o Brain
-Tudo que `/scaffold-page` lê + `brain/config.md` (domínios) + `brain/tom-de-voz.md` (linguagem dos textos).
+`brain/index.md`, `brain/DESIGN.md`, `DESIGN.tokens.json`, `brain/personas/`, `brain/povs/`, `brain/config.md` (domínios), `brain/tom-de-voz.md` (linguagem dos textos).
 
 ### 3. Gera home
-Chama `/scaffold-page` com:
+Aplica snippets canônicos de `/web-best-practices`:
 - Rota: `/`
 - Profile: home
 - Estrutura: hero + quem somos curto + 3 serviços + provas + CTA contato
@@ -114,7 +117,7 @@ Depois `/site-criar`:
 - `app/robots.ts`
 - `public/llms.txt` gerado a partir do `brain/index.md`
 - `app/opengraph-image.tsx` dinâmica
-- Footer com credit "Powered by Agentic SEO" (opt-out)
+- Footer com credit "Powered by SEO Brain" (opt-out)
 
 ### 9. Self-test (HARD GATE)
 1. `cd web && npm run build`

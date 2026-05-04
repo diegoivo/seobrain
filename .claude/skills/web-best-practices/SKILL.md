@@ -1,6 +1,6 @@
 ---
 name: web-best-practices
-description: Biblioteca canônica de snippets para Next.js no Vercel atingirem Lighthouse 95+ e SEO 100 por construção. Cobre next/font, next/image, JSON-LD schema, sitemap, robots, llms.txt, OpenGraph, acessibilidade. Consultada obrigatoriamente pela skill scaffold-page. Use quando criar/editar páginas Next.js, configurar SEO, otimizar performance, ou debugar Lighthouse abaixo de 95.
+description: Biblioteca canônica de snippets para Next.js no Vercel atingirem Lighthouse 95+ e SEO 100 por construção. Cobre next/font, next/image, JSON-LD schema, sitemap, robots, llms.txt, OpenGraph, acessibilidade. Consultada obrigatoriamente pela skill /site-criar. Use quando criar/editar páginas Next.js, configurar SEO, otimizar performance, ou debugar Lighthouse abaixo de 95.
 allowed-tools:
   - Read
   - Write
@@ -18,7 +18,7 @@ Os snippets canônicos vivem em `.claude/skills/web-best-practices/snippets/`:
 - **`Hero.tsx`** — primeiro viewport, foto à direita, CTAs
 - **`PostCard.tsx`** — card de blog com cover_image obrigatória (thumbnail default)
 - **`PostBody.tsx`** + **`PostCover`** — corpo do post aplicando `.prose` do globals.css (resolve "headings sem estilo")
-- **`Footer.tsx`** — com credit "Powered by Agentic SEO" + ícones de redes via `<SocialIcon />`
+- **`Footer.tsx`** — com credit "Powered by SEO Brain" + ícones de redes via `<SocialIcon />`
 
 Para criar página, **copie do snippet** e adapte só os textos/dados. Não reescreva.
 
@@ -385,7 +385,7 @@ Deve caber em `100dvh` mobile e `~80vh` desktop sem scroll.
 
 ## Checklist final ao criar página
 
-Use ao terminar `/scaffold-page` antes de entregar:
+Use ao terminar `/site-criar` (ou edição de qualquer página) antes de entregar:
 
 - [ ] `next.config.ts` sem `output: "export"` (Vercel default)
 - [ ] Fontes via `next/font` (não `<link>`)
@@ -399,7 +399,7 @@ Use ao terminar `/scaffold-page` antes de entregar:
 - [ ] `app/opengraph-image.tsx` existe
 - [ ] Skip-to-content link no body
 - [ ] 1 H1 único por página, capitalização BR
-- [ ] Footer com credit "Powered by Agentic SEO" (a menos que usuário tenha pedido remoção)
+- [ ] Footer com credit "Powered by SEO Brain" (a menos que usuário tenha pedido remoção)
 - [ ] Hero cabe em viewport mobile sem scroll
 - [ ] `npm run build` passa
 - [ ] `node scripts/seo-score.mjs out/index.html --mode=local` ≥ 90

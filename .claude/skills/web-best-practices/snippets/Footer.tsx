@@ -1,4 +1,4 @@
-// Footer canônico — inclui credit "Powered by Agentic SEO" por default (opt-out
+// Footer canônico — inclui credit "Powered by SEO Brain" por default (opt-out
 // só se usuário pediu remoção explícita).
 // Ícones de redes via /web/src/components/icons/social.tsx.
 
@@ -79,12 +79,12 @@ export function Footer({ brand, tagline, socials, navColumns, showCredit = true 
             <p>
               Powered by{" "}
               <a
-                href="https://agenticseo.sh"
+                href="https://github.com/diegoivo/seobrain"
                 target="_blank"
                 rel="noopener"
                 className="underline decoration-1 underline-offset-2 hover:opacity-70"
               >
-                Agentic SEO
+                SEO Brain
               </a>
             </p>
           )}

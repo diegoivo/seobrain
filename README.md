@@ -17,7 +17,7 @@ Referência conceitual: [agenticseo.sh](https://agenticseo.sh) · Multi-harness 
 | **3. Conteúdo** | Pipeline `/blogpost` (mapa de termos → concorrentes → consenso → headings → briefing → escrita) conectado a tom de voz e POVs proprietários. | ✅ |
 | **4. Tecnologia** | Stack opinado para dev com IA atingindo Lighthouse 95+ por construção. Next.js 16 SSG + Vercel. | ✅ |
 | **5. SEO Técnico** | Avaliação contínua via `seo-score.mjs` (10 categorias) + `perf-audit` (PageSpeed/Lighthouse). | ✅ |
-| **6. Dados** | Gestão dos principais dados (GA, GSC, Plausible). | 🔜 versão futura |
+| **6. Pesquisa & Dados** | 3 skills DataForSEO (volume + competitor pages + competitor keywords). Provider abstraction + GSC/GA4 em roadmap v2. | ✅ |
 
 ---
 
@@ -78,11 +78,19 @@ Skills do framework em `.claude/skills/`. Markdown puro = portátil entre harnes
 - `site-clone` — extrai paleta/fontes/logo de site existente via [agent-browser](https://github.com/vercel-labs/agent-browser) (Vercel Labs). Pré-requisito: `npm i -g agent-browser && agent-browser install`. Sem ele a skill aborta — não há fallback (clonar visual via WebFetch entrega paleta inferida sobre class names, dado impreciso).
 - `setup-email` — Resend
 - `setup-images` — Unsplash/Pexels (free) ou OpenAI Image
+- `setup-domain` — configura URL Vercel temporária após primeiro deploy
+- `seobrain-ship` — pipeline release completo (commit → preview → smoke pre-merge → confirm → main → prod)
 - `add-cms` — Payload + Neon (gatilho ≥100 páginas/3 meses)
 
 **SEO técnico:**
 - `seo-tecnico` — auditoria via seo-score
 - `perf-audit` — Lighthouse via PageSpeed + fallback local
+
+**Pesquisa & Dados (Pilar Dados):**
+- `keywords-volume` — volume + CPC + dificuldade de 1 ou N keywords (DataForSEO, ~$0.05/keyword)
+- `competitor-pages` — top 100 URLs orgânicas de um domínio (~$0.30/domínio)
+- `competitor-keywords` — top 100 keywords ranqueadas de um domínio (~$0.30/domínio)
+- Setup: copie `.env.example` → `.env.local`, preencha `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD` (signup: https://app.dataforseo.com/register).
 
 **QA:**
 - `qa` — sub-agents independentes (design, content, tech) criticam output **antes** de apresentar
