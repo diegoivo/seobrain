@@ -155,3 +155,38 @@ Ambas vivem no framework root (`.claude/skills/`) e ficam disponíveis em todos 
 **Validação.** Smoke test em projeto throwaway: add → list (sem snapshots) → injeta 2 snapshots de teste via lib direta → list mostra delta correto (+3 / −10 / nova) → history retorna série temporal ordenada → re-upsert mesma `(date, keyword)` sobrescreve sem duplicar. Tudo em Node 22.22.
 
 **Trade-off aceito.** SQLite no Brain quebra parcialmente "Brain text-first". Mitigação: `keywords.json` (config) e `reports/*.md` (saídas humanas) cobrem o caminho do humano. `history.db` é storage de queries, não de leitura direta.
+
+## Refatoração 2026-05-04: priority high default + polling responsivo + 3 modos
+
+**Motivação.** Teste E2E real expôs latência inaceitável da fila Standard Normal (priority=1): ~9min em queue confirmado via `task_get` direto, ainda sem retornar. Em horário de pico pode passar de 30min — UX intolerável pra "manual update".
+
+**Causa raiz dupla:**
+1. Priority 1 (normal) congestiona em pico. Priority 2 (high) é alegadamente 1-3min e custa 2x ($0.0183/kw vs $0.00915/kw a depth=200) — ainda 40% mais barato que Live.
+2. Polling via `tasks_ready` retorna toda a conta (até 1000 tasks) e pode ter delay próprio. `task_get/{id}` consultado direto nos meus IDs é mais responsivo.
+
+**Mudanças.**
+- Novo `liveAdvanced(enginePath, task)` no client — modo síncrono, 1 task/call, paralelizável via `pLimit`. Pricing: $0.002 base + 75% × páginas extra.
+- Novo `pollAndCollectTasks(enginePath, taskInfos)` no client — substitui combo `pollTasksReady`+`fetchTaskResult`. Consulta `task_get/advanced/{id}` direto em paralelo (concorrência 5), captura result no mesmo response (sem fetch extra).
+- `task_post` payload ganha `priority: 2` por default. Flag `--priority=normal` baixa pra 1 (mais barato, mais lento — bom pra cron noturno).
+- Flag `--live` ativa o caminho síncrono `cmdUpdateLive`.
+- Flag `--resume` retoma `.pending.json` sem re-submeter (custos preservados).
+- Função `parseLiveOrTaskResult` extraída — parser único compartilhado entre os 2 caminhos (live e async).
+- `estimateCost('serp-live', count, {depth})` adicionado.
+- Timeout do polling subiu pra 15min (era 5).
+
+**3 modos resultantes:**
+
+| Modo | CLI | Tempo (3 kw) | Custo (3 kw, depth=200) |
+|---|---|---|---|
+| async high (default) | `update` | ~50s real medido | $0.055 |
+| async normal | `update --priority=normal` | 5-30min | $0.027 |
+| live | `update --live` | ~3s real medido | $0.092 |
+
+**Validação E2E real** com `conversion.com.br` no Brasil:
+- agencia de seo → #2 (home)
+- seo → #4 (blog/o-que-e-seo/)
+- link building → #9 (blog/link-building/)
+
+Resultado idêntico nos 3 modos. Spoiler do usuário ("vai estar no top 10") confirmado.
+
+**Custo total da fase de validação:** ~$0.17 USD ($0.027 perdidos no async normal travado + $0.085 live + $0.055 async high).

@@ -16,14 +16,14 @@
 //   brain/seo/data/rank-tracker/history/<YYYY-MM-DD>.json
 //   brain/seo/data/rank-tracker/reports/<YYYY-MM-DD>.{md,csv,json}
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 import {
   taskPost,
-  pollTasksReady,
-  fetchTaskResult,
+  pollAndCollectTasks,
+  liveAdvanced,
   loadCredentials,
   defaultLocale,
   printCostPreview,
@@ -49,11 +49,12 @@ const DATA_DIR = join(ROOT, "brain", "seo", "data", "rank-tracker");
 const KEYWORDS_FILE = join(DATA_DIR, "keywords.json");
 const DB_FILE = join(DATA_DIR, "history.db");
 const REPORTS_DIR = join(DATA_DIR, "reports");
+const PENDING_FILE = join(DATA_DIR, ".pending.json");
 const SE_PATH = "serp/google/organic";
 const DEPTH = 200;
 const BATCH_SIZE = 100;
 const POLL_INTERVAL_MS = 10_000;
-const POLL_TIMEOUT_MS = 5 * 60 * 1000;
+const POLL_TIMEOUT_MS = 15 * 60 * 1000; // Standard Normal queue pode demorar — 15min default
 
 // ---------- env loader (mesmo padrão de image-search.mjs) ----------
 function loadEnv() {
@@ -294,87 +295,133 @@ async function cmdUpdate(flags) {
     saveKeywordsFile(data);
   }
 
-  // Cost preview
   loadCredentials(); // valida cedo
-  const keywords = data.keywords.map(k => k.keyword);
-  console.log(`\n[rank-tracker] target: ${targetDomain}`);
-  console.log(`[rank-tracker] locale: ${data.locale.location_code} / ${data.locale.language_code}`);
-  console.log(`[rank-tracker] depth: ${DEPTH} (máx DataForSEO desde Set/2025)`);
-  printCostPreview("serp-batch", keywords.length, keywords, { depth: DEPTH });
 
-  if (!flags["no-confirm"]) {
-    const ok = await confirm("Continuar? [s/N] ");
-    if (!ok) {
-      console.log("Cancelado.");
-      return;
+  // ---- caminho LIVE (síncrono, ~3x mais caro, instantâneo) ----
+  if (flags.live) {
+    return cmdUpdateLive(data, targetDomain, flags);
+  }
+
+  // ---- caminho BATCH ASYNC (default — mais barato, polling) ----
+  // recovery: se .pending.json existe e --resume passado, retoma sem re-submeter
+  let allTaskInfos; // {id, keyword}
+  let totalCost;
+  const pending = existsSync(PENDING_FILE) ? JSON.parse(readFileSync(PENDING_FILE, "utf8")) : null;
+
+  if (pending && flags.resume) {
+    allTaskInfos = pending.tasks;
+    totalCost = pending.cost ?? 0;
+    console.log(`\n[rank-tracker] retomando ${allTaskInfos.length} tasks pendentes de ${pending.submitted_at}`);
+    console.log(`[rank-tracker] custo já gasto: $${totalCost.toFixed(4)}`);
+  } else {
+    if (pending && !flags.resume) {
+      console.error([
+        `\n⚠️  Há ${pending.tasks.length} tasks pendentes de ${pending.submitted_at}.`,
+        `   Submetidas mas ainda não coletadas (custo já cobrado: $${(pending.cost ?? 0).toFixed(4)}).`,
+        `   Para retomar:    rank-tracker update --resume`,
+        `   Para descartar:  rm ${PENDING_FILE}`,
+        ``,
+      ].join("\n"));
+      process.exit(1);
     }
-  }
 
-  // Submete em batches de 100
-  const batches = [];
-  for (let i = 0; i < keywords.length; i += BATCH_SIZE) {
-    batches.push(keywords.slice(i, i + BATCH_SIZE));
-  }
+    // Cost preview + confirmação (caminho normal)
+    const keywords = data.keywords.map(k => k.keyword);
+    console.log(`\n[rank-tracker] target: ${targetDomain}`);
+    console.log(`[rank-tracker] locale: ${data.locale.location_code} / ${data.locale.language_code}`);
+    console.log(`[rank-tracker] depth: ${DEPTH} (máx DataForSEO desde Set/2025)`);
+    // priority 2 (high) é default — latência típica 1-3min, custo 2x normal mas 40% mais barato que Live
+    const priority = flags.priority === "normal" ? 1 : 2;
+    console.log(`[rank-tracker] priority: ${priority === 2 ? "high (1-3min típicos)" : "normal (5-10min típicos)"}`);
+    printCostPreview("serp-batch", keywords.length, keywords, { depth: DEPTH, priority });
 
-  const allTaskInfos = []; // {id, keyword}
-  let totalCost = 0;
-  for (const [idx, batch] of batches.entries()) {
-    const tasks = batch.map(kw => ({
-      keyword: kw,
-      location_code: data.locale.location_code,
-      language_code: data.locale.language_code,
-      depth: DEPTH,
-      device: "desktop",
-      os: "macos",
-    }));
-    console.log(`[rank-tracker] submetendo batch ${idx + 1}/${batches.length} (${batch.length} tasks)`);
-    const posted = await taskPost(SE_PATH, tasks);
-    posted.forEach((p, i) => {
-      if (p.statusCode >= 40000) {
-        console.warn(`  ⚠️  task falhou: "${batch[i]}" → ${p.statusMessage}`);
-      } else {
-        allTaskInfos.push({ id: p.id, keyword: batch[i] });
-        totalCost += p.cost ?? 0;
+    if (!flags["no-confirm"]) {
+      const ok = await confirm("Continuar? [s/N] ");
+      if (!ok) {
+        console.log("Cancelado.");
+        return;
       }
+    }
+
+    // Submete em batches de 100
+    const batches = [];
+    for (let i = 0; i < keywords.length; i += BATCH_SIZE) {
+      batches.push(keywords.slice(i, i + BATCH_SIZE));
+    }
+
+    allTaskInfos = [];
+    totalCost = 0;
+    for (const [idx, batch] of batches.entries()) {
+      const tasks = batch.map(kw => ({
+        keyword: kw,
+        location_code: data.locale.location_code,
+        language_code: data.locale.language_code,
+        depth: DEPTH,
+        device: "desktop",
+        os: "macos",
+        priority,
+      }));
+      console.log(`[rank-tracker] submetendo batch ${idx + 1}/${batches.length} (${batch.length} tasks)`);
+      const posted = await taskPost(SE_PATH, tasks);
+      posted.forEach((p, i) => {
+        if (p.statusCode >= 40000) {
+          console.warn(`  ⚠️  task falhou: "${batch[i]}" → ${p.statusMessage}`);
+        } else {
+          allTaskInfos.push({ id: p.id, keyword: batch[i] });
+          totalCost += p.cost ?? 0;
+        }
+      });
+    }
+    if (!allTaskInfos.length) {
+      console.error("Todas as tasks falharam. Abortando.");
+      process.exit(1);
+    }
+    console.log(`[rank-tracker] ${allTaskInfos.length} tasks na fila, custo real: $${totalCost.toFixed(4)}`);
+
+    // **Persiste IDs ANTES de poll** — se travar, dá pra retomar com --resume
+    ensureDir(PENDING_FILE);
+    writeFileSync(PENDING_FILE, JSON.stringify({
+      submitted_at: new Date().toISOString(),
+      target_domain: targetDomain,
+      locale: data.locale,
+      depth: DEPTH,
+      cost: totalCost,
+      tasks: allTaskInfos,
+    }, null, 2), "utf8");
+  }
+
+  // Poll direto via task_get/{id} (responsivo, evita delay do tasks_ready)
+  console.log(`[rank-tracker] aguardando processamento (poll a cada ${POLL_INTERVAL_MS / 1000}s, timeout ${POLL_TIMEOUT_MS / 60000}min)...`);
+  let collected;
+  try {
+    collected = await pollAndCollectTasks(SE_PATH, allTaskInfos, {
+      intervalMs: POLL_INTERVAL_MS,
+      timeoutMs: POLL_TIMEOUT_MS,
     });
-  }
-  if (!allTaskInfos.length) {
-    console.error("Todas as tasks falharam. Abortando.");
-    process.exit(1);
-  }
-  console.log(`[rank-tracker] ${allTaskInfos.length} tasks na fila, custo real: $${totalCost.toFixed(4)}`);
-
-  // Poll até prontas
-  console.log(`[rank-tracker] aguardando processamento (poll a cada ${POLL_INTERVAL_MS / 1000}s)...`);
-  const ready = await pollTasksReady(SE_PATH, allTaskInfos.map(t => t.id), {
-    intervalMs: POLL_INTERVAL_MS,
-    timeoutMs: POLL_TIMEOUT_MS,
-  });
-  const endpointById = new Map(ready.map(r => [r.id, r.endpointAdvanced ?? r.endpointRegular]));
-
-  // Fetch resultados (concorrência 5)
-  console.log(`[rank-tracker] coletando resultados...`);
-  const results = await pLimit(5, allTaskInfos, async info => {
-    const endpoint = endpointById.get(info.id);
-    if (!endpoint) {
-      return { keyword: info.keyword, position: null, url: null, title: null, error: "endpoint não encontrado" };
+  } catch (err) {
+    if (err instanceof DataForSEOError && /timeout/i.test(err.message)) {
+      console.error([
+        `\n⚠️  ${err.message}`,
+        `   Tasks salvas em ${PENDING_FILE}. Custo já gasto: $${totalCost.toFixed(4)}.`,
+        `   Retome em alguns minutos:  rank-tracker update --resume`,
+        `   (DataForSEO mantém results disponíveis por 3 dias após processamento)`,
+        ``,
+      ].join("\n"));
+      process.exit(2);
     }
-    try {
-      const json = await fetchTaskResult(endpoint, { verbose: false });
-      const items = json.tasks?.[0]?.result?.[0]?.items ?? [];
-      const organic = items.filter(it => it.type === "organic");
-      const match = organic.find(it => domainMatches(targetDomain, it.domain, { strict: !!flags["strict-subdomain"] }));
-      return {
-        keyword: info.keyword,
-        position: match?.rank_absolute ?? null,
-        url: match?.url ?? null,
-        title: match?.title ?? null,
-        in_top_100: match?.rank_absolute != null && match.rank_absolute <= 100,
-        results_count: organic.length,
-      };
-    } catch (err) {
-      return { keyword: info.keyword, position: null, url: null, title: null, error: err.message };
+    throw err;
+  }
+
+  // Resultados já vêm dentro do collected (taskData) — não precisa fetch extra
+  const results = allTaskInfos.map(info => {
+    const entry = collected.get(info.id);
+    if (!entry) {
+      return { keyword: info.keyword, position: null, url: null, title: null, error: "task não retornou" };
     }
+    if (entry.error) {
+      return { keyword: info.keyword, position: null, url: null, title: null, error: entry.error };
+    }
+    return parseLiveOrTaskResult(entry.taskData, info.keyword, targetDomain, flags);
   });
 
   // Snapshot — persiste em SQLite (idempotente por (date, keyword))
@@ -408,12 +455,97 @@ async function cmdUpdate(flags) {
   db.close();
   console.log(`[rank-tracker] snapshot persistido em ${DB_FILE} (date=${date}, ${rows.length} rows)`);
 
+  // Sucesso completo — limpa pending file
+  if (existsSync(PENDING_FILE)) {
+    rmSync(PENDING_FILE);
+  }
+
   const diff = computeDiff(prevSnap, snapshot);
 
   // Triple report output
   writeReports(date, snapshot, prevSnap, diff);
 
   // Sumário no terminal
+  printSummary(snapshot, prevSnap, diff);
+}
+
+// Parser compartilhado: extrai a posição do target_domain no payload result.items
+function parseLiveOrTaskResult(taskResult, keyword, targetDomain, flags) {
+  const items = taskResult?.result?.[0]?.items ?? [];
+  const organic = items.filter(it => it.type === "organic");
+  const match = organic.find(it => domainMatches(targetDomain, it.domain, { strict: !!flags["strict-subdomain"] }));
+  return {
+    keyword,
+    position: match?.rank_absolute ?? null,
+    url: match?.url ?? null,
+    title: match?.title ?? null,
+    in_top_100: match?.rank_absolute != null && match.rank_absolute <= 100,
+    results_count: organic.length,
+  };
+}
+
+async function cmdUpdateLive(data, targetDomain, flags) {
+  const keywords = data.keywords.map(k => k.keyword);
+  console.log(`\n[rank-tracker] modo: LIVE (síncrono, ~3x mais caro que batch async)`);
+  console.log(`[rank-tracker] target: ${targetDomain}`);
+  console.log(`[rank-tracker] locale: ${data.locale.location_code} / ${data.locale.language_code}`);
+  console.log(`[rank-tracker] depth: ${DEPTH}`);
+  printCostPreview("serp-live", keywords.length, keywords, { depth: DEPTH });
+
+  if (!flags["no-confirm"]) {
+    const ok = await confirm("Continuar? [s/N] ");
+    if (!ok) {
+      console.log("Cancelado.");
+      return;
+    }
+  }
+
+  let totalCost = 0;
+  console.log(`[rank-tracker] processando ${keywords.length} keywords em paralelo (concorrência 5)...`);
+  const results = await pLimit(5, keywords, async kw => {
+    try {
+      const taskResult = await liveAdvanced("serp/google/organic", {
+        keyword: kw,
+        location_code: data.locale.location_code,
+        language_code: data.locale.language_code,
+        depth: DEPTH,
+        device: "desktop",
+        os: "macos",
+      }, { verbose: false });
+      if (!taskResult || taskResult.status_code >= 40000) {
+        return { keyword: kw, position: null, url: null, title: null, error: taskResult?.status_message ?? "task null" };
+      }
+      totalCost += taskResult.cost ?? 0;
+      return parseLiveOrTaskResult(taskResult, kw, targetDomain, flags);
+    } catch (err) {
+      return { keyword: kw, position: null, url: null, title: null, error: err.message };
+    }
+  });
+
+  // Persiste snapshot (mesma lógica do caminho async)
+  const date = todayStamp();
+  const fetchedAt = new Date().toISOString();
+  const costUsd = Number(totalCost.toFixed(4));
+  const db = openDb(DB_FILE);
+  const prevSnap = getPreviousSnapshot(db, date);
+  const rows = results.map(r => ({
+    date, keyword: r.keyword,
+    position: r.position, url: r.url, title: r.title,
+    in_top_100: r.in_top_100 ?? null, results_count: r.results_count ?? null, error: r.error ?? null,
+    fetched_at: fetchedAt, target_domain: targetDomain, depth: DEPTH, cost_usd: costUsd,
+  }));
+  upsertSnapshotBatch(db, rows);
+  const snapshot = getSnapshot(db, date);
+  snapshot.fetched_at = fetchedAt;
+  snapshot.target_domain = targetDomain;
+  snapshot.locale = data.locale;
+  snapshot.depth = DEPTH;
+  snapshot.cost_usd = costUsd;
+  db.close();
+  console.log(`[rank-tracker] snapshot persistido em ${DB_FILE} (date=${date}, ${rows.length} rows, custo real $${costUsd})`);
+
+  const diff = computeDiff(prevSnap, snapshot);
+  writeReports(date, snapshot, prevSnap, diff);
   printSummary(snapshot, prevSnap, diff);
 }
 
@@ -562,6 +694,9 @@ Uso:
   rank-tracker remove "kw1"        Remove keyword da lista
   rank-tracker list                Mostra estado atual + última posição
   rank-tracker update              Puxa SERP, salva snapshot, gera report
+    [--priority=normal|high]         high default (1-3min, 2x preço); normal (5-10min, mais barato)
+    [--live]                         síncrono (~3x mais caro, instantâneo)
+    [--resume]                       retoma tasks pendentes (após timeout em modo async)
     [--domain=foo.com]               override do target domain
     [--strict-subdomain]             só match exato (sem subdomínios)
     [--no-confirm]                   pula prompt de custo

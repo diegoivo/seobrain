@@ -189,6 +189,72 @@ export async function pollTasksReady(enginePath, taskIds, opts = {}) {
   return [...found.values()];
 }
 
+// Polling direto via task_get (em vez de tasks_ready). Vantagens:
+// 1. Consulta só os IDs do batch atual, não a conta inteira (que pode ter tasks de
+//    outras chamadas e adicionar delay próprio).
+// 2. Quando uma task fica pronta, o response já traz o result completo —
+//    elimina o fetch extra que tasks_ready+task_get exigia.
+// 3. task_get com cost=0 quando a task já foi paga no submit (confirmado em prod).
+//
+// Cada keyword vira: pending → ready (com taskData) ou error.
+export async function pollAndCollectTasks(enginePath, taskInfos, opts = {}) {
+  const intervalMs = opts.intervalMs ?? 10_000;
+  const timeoutMs = opts.timeoutMs ?? 5 * 60 * 1000;
+  const concurrency = opts.concurrency ?? 5;
+  const firstWait = opts.firstWaitMs ?? 5000;
+  const start = Date.now();
+
+  const collected = new Map(); // id → { taskData } ou { error }
+  const pending = new Map(taskInfos.map(t => [t.id, t]));
+
+  if (firstWait > 0) await sleep(firstWait);
+
+  while (pending.size > 0) {
+    if (Date.now() - start > timeoutMs) {
+      const missing = [...pending.values()];
+      throw new DataForSEOError(
+        `pollAndCollectTasks: timeout após ${timeoutMs}ms — ${missing.length} task(s) ainda em fila`,
+        { body: { missing } },
+      );
+    }
+
+    const batch = [...pending.values()];
+    await pLimit(concurrency, batch, async info => {
+      try {
+        const json = await getDataForSEO(`/${enginePath}/task_get/advanced/${info.id}`, { verbose: false });
+        const task = json.tasks?.[0];
+        if (!task) return;
+        if (task.status_code === 40602) return; // ainda em queue
+        if (task.status_code === 20000) {
+          collected.set(info.id, { taskData: task });
+          pending.delete(info.id);
+        } else {
+          collected.set(info.id, { error: task.status_message ?? `status ${task.status_code}` });
+          pending.delete(info.id);
+        }
+      } catch (err) {
+        // mantém em pending pra próximo round
+      }
+    });
+
+    if (pending.size > 0) {
+      if (opts.verbose !== false) {
+        console.log(`[dataforseo] ${collected.size}/${taskInfos.length} prontas, aguardando ${intervalMs / 1000}s`);
+      }
+      await sleep(intervalMs);
+    }
+  }
+  return collected;
+}
+
+// Live Advanced — síncrono (~segundos), 1 task por call, ~3x mais caro que batch async.
+// Útil quando você precisa de resultado AGORA (debug, teste manual). Caller paraleliza
+// via pLimit para processar N keywords concorrentemente.
+export async function liveAdvanced(enginePath, task, opts = {}) {
+  const json = await callDataForSEO(`/${enginePath}/live/advanced`, [task], opts);
+  return json.tasks?.[0] ?? null;
+}
+
 export async function fetchTaskResult(endpointPath, opts = {}) {
   // endpointPath chega como "/v3/serp/google/organic/task_get/advanced/<id>"
   // BASE_URL já tem "/v3", então removemos o prefixo se vier completo.
@@ -265,11 +331,14 @@ export function estimateCost(operation, count = 1, opts = {}) {
   };
 
   // SERP batch async (Standard Normal): top 10 = $0.0006, cada página adicional (10) = 75% do base = $0.00045.
+  // SERP live: top 10 = $0.002, cada página adicional = 75% do base = $0.0015.
   // Cap de depth = 200 (Set/2025, após Google matar num=100).
-  if (operation === "serp-batch") {
+  if (operation === "serp-batch" || operation === "serp-live") {
     const depth = Math.min(opts.depth ?? 200, 200);
-    const priority = opts.priority ?? 1; // 1=normal, 2=high
-    const base = priority === 2 ? 0.0012 : 0.0006;
+    const priority = opts.priority ?? 1; // 1=normal, 2=high (só batch)
+    const base = operation === "serp-live"
+      ? 0.002
+      : (priority === 2 ? 0.0012 : 0.0006);
     const extraPages = Math.max(0, Math.ceil((depth - 10) / 10));
     const unit = base + extraPages * (base * 0.75);
     return { unit, total: unit * count, currency: "USD", depth, pages: 1 + extraPages };

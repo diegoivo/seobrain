@@ -23,9 +23,22 @@ rank-tracker --help                # ajuda
 ```
 
 Flags em `update`:
+- `--priority=normal|high` — `high` é default (1-3min típicos, $0.0183/kw); `normal` é mais barato mas mais lento (5-10min, $0.00915/kw)
+- `--live` — modo síncrono (~3s, ~$0.0305/kw — 3× mais caro que high). Use pra debug/urgência.
+- `--resume` — retoma tasks pendentes após timeout do polling async
 - `--domain=foo.com.br` — override do target domain (default: lê de `brain/config.md`)
 - `--strict-subdomain` — só match exato (default: aceita `blog.foo.com.br` se target é `foo.com.br`)
 - `--no-confirm` — pula prompt de custo (use só em automação)
+
+## Modos do `update`: comparativo
+
+| Modo | Como invocar | Tempo típico | Custo (3 kw, depth=200) | Quando usar |
+|---|---|---|---|---|
+| **batch async high** | (default) | 1-3 min | $0.055 | sweet spot — manual semanal |
+| batch async normal | `--priority=normal` | 5-10 min (até 30 em pico) | $0.027 | cron noturno barato |
+| live síncrono | `--live` | ~3 s | $0.092 | debug, urgência |
+
+Resiliência: o caminho async persiste IDs em `.pending.json` ANTES de pollar. Se o polling estourar timeout (15min default), o script sai com mensagem clara e você retoma com `update --resume` quando achar conveniente. Tasks DataForSEO ficam disponíveis por 3 dias após processadas.
 
 ## Pré-requisitos
 
@@ -89,9 +102,9 @@ CREATE INDEX idx_date ON snapshots(date);
    [dataforseo] custo estimado: ~$0.4575 USD (50 keywords × 20 págs × $0.00915)
    Continuar? [s/N]
    ```
-4. **Submete batches** de até 100 tasks em `POST /v3/serp/google/organic/task_post` com `depth=200`.
-5. **Polling** em `GET /v3/serp/google/organic/tasks_ready` (10s entre polls, timeout 5min).
-6. **Fetch resultados** em `GET /v3/serp/google/organic/task_get/advanced/{id}` (concorrência 5).
+4. **Submete batches** de até 100 tasks em `POST /v3/serp/google/organic/task_post` com `depth=200` e `priority=2` (high) por default.
+5. **Persiste IDs em `.pending.json`** antes de pollar (recuperação via `--resume` se o polling travar).
+6. **Polling responsivo** via `GET /v3/serp/google/organic/task_get/advanced/{id}` direto nos IDs do batch (concorrência 5, 10s entre rodadas, timeout 15min). Não usa `tasks_ready` — esse retorna a conta inteira e tem delay próprio.
 7. **Match de domínio:** normaliza (strip protocol/www/trailing slash/lowercase). Aceita subdomínios por padrão; `--strict-subdomain` desliga.
 8. **Snapshot** persistido em `history.db` via `INSERT OR REPLACE`. Idempotente por `(date, keyword)`: rodar 2× no mesmo dia sobrescreve, não duplica.
 9. **Diff vs snapshot anterior cronológico** via `SELECT MAX(date) WHERE date < ?`. Buckets:
