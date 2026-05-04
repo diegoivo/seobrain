@@ -1,5 +1,5 @@
 
-# /perf-audit
+# /technical-seo
 
 Roda auditoria Lighthouse e devolve scores por categoria + lista priorizada de fixes.
 
@@ -19,7 +19,7 @@ Sempre tente PageSpeed Insights API primeiro (não exige instalação). Se falha
 **Sem key (rate limit ~1 req/sec):**
 
 ```bash
-node scripts/perf-audit.mjs <url> --strategy=mobile
+node scripts/technical-seo.mjs <url> --strategy=mobile
 ```
 
 Funciona pra uso pontual. Pode falhar em rate-limit se rodar várias vezes em sequência.
@@ -33,7 +33,7 @@ echo "PAGESPEED_API_KEY=AIza..." >> .env.local
 ```
 
 ```bash
-PAGESPEED_API_KEY=AIza... node scripts/perf-audit.mjs <url> --strategy=mobile
+PAGESPEED_API_KEY=AIza... node scripts/technical-seo.mjs <url> --strategy=mobile
 ```
 
 ### Caminho 2 — Fallback Lighthouse local
@@ -49,9 +49,9 @@ Lighthouse roda em ~30s. Não precisa instalação prévia (`npx -y` baixa sob d
 ## Como rodar
 
 ```bash
-node scripts/perf-audit.mjs https://meusite.com.br
-node scripts/perf-audit.mjs https://meusite.com.br --strategy=desktop
-node scripts/perf-audit.mjs http://localhost:3000  # após web:dev
+node scripts/technical-seo.mjs https://meusite.com.br
+node scripts/technical-seo.mjs https://meusite.com.br --strategy=desktop
+node scripts/technical-seo.mjs http://localhost:3000  # após web:dev
 ```
 
 Sem args, busca a URL canônica em `brain/index.md`.

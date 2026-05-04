@@ -2,7 +2,7 @@
 // Brain Lint — Karpathy-style + Obsidian-friendly.
 // Valida: frontmatter, freshness, orphans (páginas sem inbound links),
 // broken wikilinks, stale claims, contradições heurísticas.
-// Uso: node scripts/brain-lint.mjs [--strict]
+// Uso: node scripts/wiki-lint.mjs [--strict]
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -65,7 +65,7 @@ async function checkBrainCore() {
     await checkStaleClaims(f);
   }
   if (!existsSync(join(ROOT, "brain/DESIGN.md"))) {
-    WARNINGS.push("brain/DESIGN.md não existe — rode /design-init (ou /onboard fase brandbook)");
+    WARNINGS.push("brain/DESIGN.md não existe — rode /branding-init (ou /seobrain:start fase brandbook)");
   }
 }
 
@@ -79,7 +79,7 @@ async function checkBrainEntities() {
     const entries = await readdir(full);
     const real = entries.filter(e => e.endsWith(".md") && e !== "index.md" && !e.startsWith("_"));
     if (real.length === 0) {
-      WARNINGS.push(`${dir}: vazio (0 entidades). Esperado após /onboard.`);
+      WARNINGS.push(`${dir}: vazio (0 entidades). Esperado após /seobrain:start.`);
     }
   }
 }

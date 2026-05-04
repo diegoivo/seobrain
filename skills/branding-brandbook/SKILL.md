@@ -10,7 +10,7 @@ allowed-tools:
 
 # /brandbook v2 — consultoria de branding
 
-Brandbook **bloqueante após `/design-init`** (não opcional, não adiado). Aplicação visual + guia de marca completo. Espelha o Brain (DESIGN, tom, personas, POVs).
+Brandbook **bloqueante após `/branding-init`** (não opcional, não adiado). Aplicação visual + guia de marca completo. Espelha o Brain (DESIGN, tom, personas, POVs).
 
 ## Pré-condições
 

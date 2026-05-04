@@ -2,10 +2,10 @@
   "summary": {
     "skills_dir": "skills",
     "prompts_total": 20,
-    "top1_correct": 17,
+    "top1_correct": 16,
     "top3_correct": 20,
     "top5_correct": 20,
-    "top1_pct": "85.0",
+    "top1_pct": "80.0",
     "top3_pct": "100.0",
     "top5_pct": "100.0"
   },
@@ -31,7 +31,7 @@
         "artigo"
       ],
       "top_match": "website-create",
-      "top_score": "0.059",
+      "top_score": "0.061",
       "correct_top1": false,
       "correct_top3": true,
       "correct_top5": true
@@ -105,7 +105,7 @@
         "seo-imagens"
       ],
       "top_match": "branding-images",
-      "top_score": "0.043",
+      "top_score": "0.035",
       "correct_top1": false,
       "correct_top3": true,
       "correct_top5": true
@@ -153,7 +153,7 @@
         "seo-estrategia"
       ],
       "top_match": "seo-strategy",
-      "top_score": "0.071",
+      "top_score": "0.050",
       "correct_top1": true,
       "correct_top3": true,
       "correct_top5": true
@@ -165,7 +165,7 @@
         "seo-estrategia"
       ],
       "top_match": "seo-strategy",
-      "top_score": "0.071",
+      "top_score": "0.050",
       "correct_top1": true,
       "correct_top3": true,
       "correct_top5": true
@@ -176,9 +176,9 @@
         "seobrain",
         "onboard"
       ],
-      "top_match": "seobrain",
-      "top_score": "0.078",
-      "correct_top1": true,
+      "top_match": "website-domain",
+      "top_score": "0.079",
+      "correct_top1": false,
       "correct_top3": true,
       "correct_top5": true
     },
@@ -201,7 +201,7 @@
         "site-criar"
       ],
       "top_match": "website-bestpractices",
-      "top_score": "0.114",
+      "top_score": "0.067",
       "correct_top1": false,
       "correct_top3": true,
       "correct_top5": true

@@ -8,7 +8,7 @@ allowed-tools:
   - Glob
 ---
 
-# /qa-design — sub-agent QA visual
+# /branding-review — sub-agent QA visual
 
 Especialista em design. Não toca em copy ou build. Lê DESIGN.md + globals.css + componentes alterados, compara contra:
 - `brain/DESIGN.md` (tokens da marca).

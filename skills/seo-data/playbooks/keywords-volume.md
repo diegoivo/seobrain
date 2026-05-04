@@ -1,5 +1,5 @@
 
-# /keywords-volume — Search Volume API
+# /seo-data — Search Volume API
 
 Puxa volume mensal, CPC e competition de uma ou N keywords via DataForSEO. Salva resultado em formato triplo para diferentes consumidores: humano (md), planilha (csv), automação (json).
 
@@ -10,9 +10,9 @@ Puxa volume mensal, CPC e competition de uma ou N keywords via DataForSEO. Salva
 
 ## Inputs
 
-- 1 keyword: `/keywords-volume "seo agentico"`
-- N keywords (até 1000 por chamada): `/keywords-volume "seo agentico, geo, llm wiki, cms next.js"` (CSV-style)
-- Arquivo: `/keywords-volume --file=brain/seo/keywords-research.txt` (1 keyword por linha)
+- 1 keyword: `/seo-data "seo agentico"`
+- N keywords (até 1000 por chamada): `/seo-data "seo agentico, geo, llm wiki, cms next.js"` (CSV-style)
+- Arquivo: `/seo-data --file=brain/seo/keywords-research.txt` (1 keyword por linha)
 
 Flags opcionais:
 - `--country=BR` (default 2076 BR) — códigos: https://docs.dataforseo.com/v3/serp/google/locations/
@@ -112,8 +112,8 @@ Output salvo em:
   brain/seo/data/keywords/seo-agentico-2026-05-03.json
 
 Próximos passos sugeridos:
-- /seo-estrategia para criar topic clusters a partir destas keywords
-- /blogpost <keyword> para um artigo skyscraper
+- /seo-strategy para criar topic clusters a partir destas keywords
+- /content-seo <keyword> para um artigo skyscraper
 ```
 
 ## Erros e edge cases
@@ -136,7 +136,7 @@ Próximos passos sugeridos:
 
 ## Output canônico
 
-Arquivos sempre em `brain/seo/data/keywords/`. Skill `/seo-estrategia` consome estes arquivos para topic clusters.
+Arquivos sempre em `brain/seo/data/keywords/`. Skill `/seo-strategy` consome estes arquivos para topic clusters.
 
 ## Princípios
 

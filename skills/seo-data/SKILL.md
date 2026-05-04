@@ -55,7 +55,6 @@ Tipo de pesquisa?
 ## References
 
 - `references/dataforseo-cost-table.md` — tabela de custos transparentes (todas as APIs).
-- `references/locale-defaults.md` — defaults BR/pt-br + outros locales.
 
 ## Outputs
 

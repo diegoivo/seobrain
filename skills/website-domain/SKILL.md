@@ -1,6 +1,6 @@
 ---
 name: website-domain
-description: Configura domínio temporário Vercel após primeiro deploy. Lê URL *.vercel.app, atualiza brain/config.md (campo Domínio temporário), atualiza metadataBase em web/src/app/layout.tsx, confirma com usuário. Evita SEO ruim de domínio fantasma. Roda automaticamente ao final do primeiro /seobrain-ship em projeto novo. Use quando o usuário disser "configurar domínio", "setup domain", "primeiro deploy", "atualizar metadataBase", "canonical", "vercel.app", "domain temporário".
+description: Configura domínio temporário Vercel após primeiro deploy. Lê URL *.vercel.app, atualiza brain/config.md (campo Domínio temporário), atualiza metadataBase em web/src/app/layout.tsx, confirma com usuário. Evita SEO ruim de domínio fantasma. Roda automaticamente ao final do primeiro /ship em projeto novo. Use quando o usuário disser "configurar domínio", "setup domain", "primeiro deploy", "atualizar metadataBase", "canonical", "vercel.app", "domain temporário".
 allowed-tools:
   - Read
   - Edit
@@ -8,23 +8,23 @@ allowed-tools:
   - Grep
 ---
 
-# /setup-domain — configura domínio temporário Vercel
+# /website-domain — configura domínio temporário Vercel
 
 Pre-deploy o usuário não tem domínio próprio apontado. `brain/config.md` mantém `Domínio definitivo: TEMPLATE` e `Domínio temporário: pendente`. Esta skill resolve o "pendente" lendo a URL Vercel e atualizando metadataBase + canonicals.
 
 ## Quando rodar
 
-- **Primeiro deploy** em projeto novo (chamada por `/seobrain-ship` automaticamente).
+- **Primeiro deploy** em projeto novo (chamada por `/ship` automaticamente).
 - Quando usuário troca de projeto Vercel (URL muda).
 - Quando `brain/config.md` mostra `Domínio temporário: pendente` mas há deploy ativo.
 
 ## Detecção da URL Vercel (3 fontes em ordem)
 
-1. **Argumento explícito:** `/setup-domain https://meu-app-abc123.vercel.app`
+1. **Argumento explícito:** `/website-domain https://meu-app-abc123.vercel.app`
 2. **Vercel CLI:** `vercel ls --prod 2>&1 | head -10` — extrai URL da última deploy prod
 3. **Prompt ao usuário:** "Não detectei deploy ativo. Cole a URL Vercel da home da home (ex: `https://meu-app.vercel.app`):"
 
-Se nenhuma fonte resolve: para com mensagem clara — "rode `/seobrain-ship` primeiro ou faça deploy manual antes".
+Se nenhuma fonte resolve: para com mensagem clara — "rode `/ship` primeiro ou faça deploy manual antes".
 
 ## Pipeline
 
@@ -44,7 +44,7 @@ Domínio temporário: <url-detectada>
 ```
 Mantém formatação. Adiciona linha de timestamp em comentário:
 ```
-<!-- Atualizado por /setup-domain em 2026-05-03 -->
+<!-- Atualizado por /website-domain em 2026-05-03 -->
 ```
 
 ### 3. Atualizar `metadataBase` em `web/src/app/layout.tsx`
@@ -101,7 +101,7 @@ Depois:
 ```
 Domínio definitivo: TEMPLATE
 Domínio temporário: https://meu-app-abc123.vercel.app
-<!-- Atualizado por /setup-domain em 2026-05-03 -->
+<!-- Atualizado por /website-domain em 2026-05-03 -->
 ```
 
 `web/src/app/layout.tsx` antes:

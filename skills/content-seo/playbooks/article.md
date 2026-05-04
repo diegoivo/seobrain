@@ -6,8 +6,8 @@ Pipeline completo de criação de artigo seguindo a filosofia do kit.
 ## HARD STOPs
 
 1. **`intent-analyst` NÃO rodou** → abortar com:
-   > "Preciso rodar `/intent-analyst` antes pra saber a forma certa do artigo (informacional, comercial, transacional). Roda primeiro."
-2. **`brain/index.md` é template** → redirecionar para `/onboard`.
+   > "Preciso rodar `/content-seo` antes pra saber a forma certa do artigo (informacional, comercial, transacional). Roda primeiro."
+2. **`brain/index.md` é template** → redirecionar para `/seobrain:start`.
 3. **`proprietary_claims` faltando ou genéricos** → bloquear (não auto-resolver).
 
 Sem hard stops, **não escreva**.
@@ -25,7 +25,7 @@ Sem hard stops, **não escreva**.
 - Documente. Vão para `proprietary_claims[]` no frontmatter.
 
 ### 3. Análise de intenção (HARD GATE)
-- Roda `/intent-analyst` com a query/tópico.
+- Roda `/content-seo` com a query/tópico.
 - Recebe: intenção dominante + tamanho-alvo (palavras) + forma recomendada.
 - **Sem isso, abortar.**
 
@@ -109,7 +109,7 @@ Se algum **high** falha, **refazer** antes de entregar. Não publique 47 palavra
 Roda checklist de URL/H1/intro/visuais/links.
 
 ### 11. Cover image obrigatória
-Se `cover_image` ausente, dispare `/setup-images` para gerar/escolher antes de salvar.
+Se `cover_image` ausente, dispare `/branding-images` para gerar/escolher antes de salvar.
 
 ### 12. Indexação
 Adiciona em `content/posts/index.md` (lista cronológica) com link, data, categoria, cover.

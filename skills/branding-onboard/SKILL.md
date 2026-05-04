@@ -9,13 +9,13 @@ allowed-tools:
   - Grep
 ---
 
-# /onboard-brandbook — fase 2 do onboarding
+# /branding-onboard — fase 2 do onboarding
 
 Materializa o **brandbook visual** sobre a fundação canônica do framework (grid 12-col + perfect fourth + spacing 4-base). **Não toca em escala, grid ou spacing** — apenas em fontes, paleta e mood.
 
 ## Pré-condição
 
-- `brain/index.md` precisa estar `kit_state: initialized`. Se não estiver, peça ao usuário: "Brain ainda em estado template. Rode `/onboard-brain` antes."
+- `brain/index.md` precisa estar `kit_state: initialized`. Se não estiver, peça ao usuário: "Brain ainda em estado template. Rode `/wiki-init` antes."
 
 ## Inputs
 
@@ -35,22 +35,22 @@ Lê:
 - `brain/index.md` → mood verbal, antipadrões herdados, posicionamento.
 - `brain/personas/index.md` → contexto de uso (B2B sério vs. consumidor jovial).
 - `.cache/onboard-research.md` → posicionamento textual extraído pelo `/onboard` (nunca paleta — pesquisa textual não captura visual).
-- `.cache/site-clone/extract.json` → paleta, fontes, logo (apenas se `/site-clone` rodou com sucesso e usuário tinha domínio existente).
+- `.cache/branding-clone/extract.json` → paleta, fontes, logo (apenas se `/branding-clone` rodou com sucesso e usuário tinha domínio existente).
 
-Produz **defaults inferidos** para passar ao `/design-init` — não para gravar direto. O usuário ainda confirma cada decisão.
+Produz **defaults inferidos** para passar ao `/branding-init` — não para gravar direto. O usuário ainda confirma cada decisão.
 
-**Sem clone visual**: vai direto para `/design-init` from-scratch. As 10 perguntas anti-AI-slop garantem o resultado, mesmo sem inspiração de site existente.
+**Sem clone visual**: vai direto para `/branding-init` from-scratch. As 10 perguntas anti-AI-slop garantem o resultado, mesmo sem inspiração de site existente.
 
 #### Regras de inferência (críticas)
 
-- **Paleta, fontes, logo, mood visual**: vêm **só** de `.cache/site-clone/extract.json`. Se ausente → defaults from-scratch via `/design-init`.
+- **Paleta, fontes, logo, mood visual**: vêm **só** de `.cache/branding-clone/extract.json`. Se ausente → defaults from-scratch via `/branding-init`.
 - **Nunca infira cor a partir de descrição textual.** Não traduza "eles falam em sustentabilidade" para "verde", "premium" para "preto + dourado", "tech" para "azul + roxo". Isso é AI-slop.
 - **Nunca invente fonte plausível.** "Inter como fallback comum" é exatamente o que a regra do framework proíbe.
-- **Posicionamento textual** (do `.cache/onboard-research.md`) entra no prompt do `/design-init` como contexto editorial — nunca como fonte direta de tokens visuais.
+- **Posicionamento textual** (do `.cache/onboard-research.md`) entra no prompt do `/branding-init` como contexto editorial — nunca como fonte direta de tokens visuais.
 
-### 2.2 Chamar `/design-init`
+### 2.2 Chamar `/branding-init`
 
-Invoque a skill `/design-init` (10 perguntas anti-AI-slop) **com os defaults inferidos pré-preenchidos**. O `/design-init`:
+Invoque a skill `/branding-init` (10 perguntas anti-AI-slop) **com os defaults inferidos pré-preenchidos**. O `/branding-init`:
 - Pergunta atmosfera, paleta, tipografia, mood, antipadrões.
 - Grava `brain/DESIGN.md` (narrativa) + `brain/DESIGN.tokens.json` (tokens).
 - Aplica regra do primeiro viewport (hero cabe em 100dvh mobile sem scroll).
@@ -69,7 +69,7 @@ Resultado: `kit_state: template` → `initialized` em `brain/DESIGN.md`.
 **Atualize**:
 - `--font-display`, `--font-body`, `--font-mono` em `:root` (CSS vars internas).
 - `:root` color tokens: `--bg`, `--fg`, `--muted`, `--border`, `--accent`, `--accent-fg`.
-- (Opcional) Adicione `next/font` import no `layout.tsx` se as fontes vieram do Google/Bunny Fonts. Cheque whitelist em [`/web-best-practices`](../web-best-practices/SKILL.md).
+- (Opcional) Adicione `next/font` import no `layout.tsx` se as fontes vieram do Google/Bunny Fonts. Cheque whitelist em [`/website-bestpractices`](../website-bestpractices/SKILL.md).
 
 ### 2.4 Popular o scaffold em `web/src/app/brandbook/`
 
@@ -83,7 +83,7 @@ Demais rotas herdam tokens automaticamente.
 
 ### 2.5 Imagens — estilo + provider
 
-Chama `/setup-images` para perguntar:
+Chama `/branding-images` para perguntar:
 
 - **Estilo** (5 opções: editorial / candid / technical / archival / experimental)
 - **Tipos** em uso (hero universal; secondary, avatar, illustration opt-in)
@@ -114,7 +114,7 @@ Abra mentalmente `/brandbook` em viewport 375×812 e 1280×800. Verifique:
 
 ```bash
 git add brain/DESIGN.md brain/DESIGN.tokens.json web/src/app/globals.css web/src/app/brandbook/ web/src/app/layout.tsx
-git commit -m "chore(onboard-brandbook): tokens aplicados — <mood-slug>"
+git commit -m "chore(branding-onboard): tokens aplicados — <mood-slug>"
 ```
 
 ---
@@ -122,7 +122,7 @@ git commit -m "chore(onboard-brandbook): tokens aplicados — <mood-slug>"
 ## Regras críticas
 
 1. **Não inclua `$schema`** apontando para URL externo em `DESIGN.tokens.json`. Não invente domínios (`schemas.agenticseo.sh` é alucinação — não existe).
-2. **Apenas fontes gratuitas** (Google Fonts, Bunny Fonts, OFL/SIL). Whitelist em `/web-best-practices`.
+2. **Apenas fontes gratuitas** (Google Fonts, Bunny Fonts, OFL/SIL). Whitelist em `/website-bestpractices`.
 3. **Não criar logo/ícone.** Apenas wordmark estilizado (typography only). A skill `/wordmark` (interna ao brandbook scaffold) gera variações.
 4. **Não toque na escala/grid/spacing canônicos.** Se o usuário pedir mudança nestes, redirecione: "Escala e grid são canônicos do framework (docs/typography.md, docs/grid-system.md). Mudança aqui afeta todos os projetos. Você quer mesmo desviar?"
 
@@ -136,7 +136,7 @@ Ao fim, edite `.cache/onboard.md`:
 ## Fase 2 — Brandbook
 Status: completed
 - [x] 2.1 Defaults inferidos
-- [x] 2.2 /design-init concluído
+- [x] 2.2 /branding-init concluído
 - [x] 2.3 globals.css atualizado (fontes + cores)
 - [x] 2.4 Scaffold do brandbook populado
 - [x] 2.5 Smoke test (build passa)
@@ -145,7 +145,7 @@ Status: completed
 
 ## Conclusão
 
-1. Atualiza `brain/log.md`: `## <data> — onboard-brandbook concluído`.
+1. Atualiza `brain/log.md`: `## <data> — branding-onboard concluído`.
 2. Mostra URL local: `npm run dev` → `/brandbook`.
 3. Devolve controle ao orquestrador `/onboard` (que conclui o fluxo) ou ao usuário (se rodando standalone).
-4. Sugestão: "Brandbook ao vivo. Quer gerar a estrutura do site agora? Rode `/site-criar`."
+4. Sugestão: "Brandbook ao vivo. Quer gerar a estrutura do site agora? Rode `/website-create`."

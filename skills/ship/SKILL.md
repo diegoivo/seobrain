@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Pipeline de release do SEO Brain — pre-flight (typecheck + build + qa orquestrador), commit conventional, push, preview deploy via Vercel, smoke pre-merge, merge em main, prod deploy, smoke prod, atualizar Brain via /aprovado. Hard gate de confirmação antes de qualquer mudança em main. Use quando o usuário disser "ship", "deploy", "release", "publish", "push to production", "ir pra prod", "subir produção", "merge main", "lançar a versão". Renomeada de /ship para evitar colisão com gstack/ship.
+description: Release pipeline for SEO Brain — pre-flight (typecheck + build + qa orchestrator), conventional commit, push, Vercel preview deploy, smoke pre-merge, merge to main, prod deploy, smoke prod, update LLM Wiki via /approved. Hard confirmation gate before any change to main branch. Use when user asks "ship", "deploy", "release", "publish", "push to production", "ir pra prod", "subir produção", "merge main", "lançar a versão", "create PR", "abrir PR". Renamed from /seobrain-ship to /ship (v0.1.0).
 allowed-tools:
   - Read
   - Bash
@@ -8,7 +8,7 @@ allowed-tools:
   - Grep
 ---
 
-# /seobrain-ship — pipeline de release
+# /ship — pipeline de release
 
 Orquestra o `Ship` do pipeline `Think → Plan → Build → Test → Ship → Document`. Garante que código quebrado não chega em `main` e que produção é validada antes do Brain registrar a tarefa como concluída.
 
@@ -96,7 +96,7 @@ Mensagem ao usuário:
 ```bash
 git checkout main
 git pull --ff-only origin main
-git merge --no-ff <branch> -m "Merge: <branch> via /seobrain-ship"
+git merge --no-ff <branch> -m "Merge: <branch> via /ship"
 git push origin main
 git checkout <branch>
 ```
@@ -118,7 +118,7 @@ Mensagem final ao usuário:
 > - Produção: <prod-url>
 > - Smoke: prod 200 OK
 >
-> Aprove com `/aprovado` para documentar no Brain (atualiza `brain/index.md`, `brain/backlog.md`)."
+> Aprove com `/approved` para documentar no Brain (atualiza `brain/index.md`, `brain/backlog.md`)."
 
 ## Confirmação por escopo
 
@@ -157,9 +157,9 @@ Mensagem final ao usuário:
 
 | Skill | Quando |
 |---|---|
-| `/plano` | Antes de começar tarefa não-trivial |
+| `/plan` | Antes de começar tarefa não-trivial |
 | `/qa` | Durante/após desenvolvimento, para validar |
-| `/seobrain-ship` | Tarefa pronta, quer ir pra produção |
+| `/ship` | Tarefa pronta, quer ir pra produção |
 | `/vercel:deploy` | Só preview deploy (sem merge ou smoke) |
-| `/aprovado` | Após ship, registra no Brain |
-| `/setup-domain` | Após **primeiro** ship em projeto novo |
+| `/approved` | Após ship, registra no Brain |
+| `/website-domain` | Após **primeiro** ship em projeto novo |

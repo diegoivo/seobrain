@@ -1,5 +1,5 @@
 
-# /competitor-pages — top URLs orgânicas de um concorrente
+# /seo-data — top URLs orgânicas de um concorrente
 
 Lista top 100 páginas de um domínio com tráfego orgânico estimado, número de keywords ranqueando e posições médias. Útil para skyscraper analysis e topic cluster discovery.
 
@@ -10,8 +10,8 @@ Lista top 100 páginas de um domínio com tráfego orgânico estimado, número d
 
 ## Input
 
-- 1 domínio: `/competitor-pages conversion.com.br`
-- Multiple: `/competitor-pages conversion.com.br,resultadosdigitais.com.br` (vai rodar 2 calls, custo dobrado)
+- 1 domínio: `/seo-data conversion.com.br`
+- Multiple: `/seo-data conversion.com.br,resultadosdigitais.com.br` (vai rodar 2 calls, custo dobrado)
 
 Flags:
 - `--country=BR` (default 2076)
@@ -69,7 +69,7 @@ Total páginas: 100
 
 | URL | ETV (mês) | Keywords | Top 1 | Top keyword |
 |---|---|---|---|---|
-| /blog/seo-tecnico | 12450 | 320 | 18 | seo técnico |
+| /blog/technical-seo | 12450 | 320 | 18 | seo técnico |
 | /blog/llm-wiki | 8900 | 180 | 22 | llm wiki |
 | ...
 
@@ -86,7 +86,7 @@ Total páginas: 100
 ### 6. Sumário ao usuário
 ```
 ✅ 100 páginas extraídas de conversion.com.br, $0.30 USD.
-Top 3 por tráfego: /blog/seo-tecnico (12450), /blog/llm-wiki (8900), /blog/geo (7200).
+Top 3 por tráfego: /blog/technical-seo (12450), /blog/llm-wiki (8900), /blog/geo (7200).
 Categorias dominantes: /blog/ (78), /servicos/ (12).
 
 Output salvo em:
@@ -95,9 +95,9 @@ Output salvo em:
   brain/seo/data/competitors/conversion-com-br-pages-2026-05-03.json
 
 Próximos passos:
-- /competitor-keywords <dominio> — quais keywords levam tráfego pra estas páginas
-- /seo-estrategia — usa esses dados pra propor topic clusters
-- /blogpost <topico> — escrever skyscraper sobre tópico dominante
+- /seo-data <dominio> — quais keywords levam tráfego pra estas páginas
+- /seo-strategy — usa esses dados pra propor topic clusters
+- /content-seo <topico> — escrever skyscraper sobre tópico dominante
 ```
 
 ## Edge cases
@@ -121,9 +121,9 @@ Próximos passos:
 
 | Skill | Output |
 |---|---|
-| `/competitor-pages` | URLs com tráfego (orientado a páginas) |
-| `/competitor-keywords` | Keywords ranqueadas (orientado a queries) |
-| `/keywords-volume` | Volume + CPC de keywords escolhidas (orientado a research) |
+| `/seo-data` | URLs com tráfego (orientado a páginas) |
+| `/seo-data` | Keywords ranqueadas (orientado a queries) |
+| `/seo-data` | Volume + CPC de keywords escolhidas (orientado a research) |
 
 ## Princípios
 

@@ -14,8 +14,8 @@ Roda ao final de cada tarefa aprovada. Mantém o Brain como source-of-truth atua
 
 ## Quando dispara
 
-- Slash command `/aprovado` é digitado pelo usuário após o agent dizer "Tarefa concluída: [resumo]. Aprove com /aprovado para documentar no Brain, ou diga o que ajustar."
-- Manualmente: `/aprovado <comentário opcional>`.
+- Slash command `/approved` é digitado pelo usuário após o agent dizer "Tarefa concluída: [resumo]. Aprove com /approved para documentar no Brain, ou diga o que ajustar."
+- Manualmente: `/approved <comentário opcional>`.
 
 ## Passos
 

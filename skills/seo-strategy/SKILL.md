@@ -1,6 +1,6 @@
 ---
 name: seo-strategy
-description: Estratégia de SEO em 7 passos consolidados — análise de concorrentes, saúde técnica, posicionamento, mapeamento de palavras-chave, topic clusters, linkbait, link building. Use quando o usuário pedir "estratégia de SEO", "plano de SEO", "como crescer no SEO", "topic cluster" ou estiver iniciando um projeto.
+description: SEO strategy planning in 7 consolidated steps — competitor analysis, technical health, positioning, keyword mapping, topic clusters, linkbait, link building. Use when user asks "SEO strategy", "estratégia de SEO", "plano de SEO", "como crescer no SEO", "topic cluster", "growth plan", "SEO roadmap", "competitive analysis", "link building plan", or when starting a project that needs growth strategy beyond per-page optimization. Renamed from /seo-estrategia (v0.1.0).
 allowed-tools:
   - Read
   - Write

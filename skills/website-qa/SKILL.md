@@ -8,7 +8,7 @@ allowed-tools:
   - Glob
 ---
 
-# /qa-tech — sub-agent QA técnico
+# /website-qa — sub-agent QA técnico
 
 Especialista em build/SEO técnico/a11y. Não toca em design ou copy.
 
@@ -26,7 +26,7 @@ Especialista em build/SEO técnico/a11y. Não toca em design ou copy.
 ### P1 (atenção)
 
 - `node scripts/seo-score.mjs <url|path>` < 90 (alvo é 100).
-- Lighthouse via `/perf-audit`: Perf < 95 / SEO < 100 / A11y < 95 / BP < 95.
+- Lighthouse via `/technical-seo`: Perf < 95 / SEO < 100 / A11y < 95 / BP < 95.
 - HTML sem `<main id="main">`.
 - Hierarquia de headings pula nível (h1 → h3).
 - Imagens sem `alt` (não-decorativas) ou `alt=""` errado.
@@ -49,7 +49,7 @@ Especialista em build/SEO técnico/a11y. Não toca em design ou copy.
 
 1. `cd web && npm run build` — captura stdout + stderr. Se falha, pare aqui (P0).
 2. Se build passa: roda `node scripts/seo-score.mjs <path>` (ou rota local).
-3. Se URL de preview/prod disponível: roda `/perf-audit <url>` (Lighthouse).
+3. Se URL de preview/prod disponível: roda `/technical-seo <url>` (Lighthouse).
 4. Grep contra checks específicos:
    - `<main id="main">` presente.
    - Hierarquia de headings (`<h1>` → `<h2>` → `<h3>`, sem pular).

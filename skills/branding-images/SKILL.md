@@ -1,6 +1,6 @@
 ---
 name: branding-images
-description: Configura sistema de imagens do projeto — escolhe estilo (mood-board canônico) + tipos de uso, configura provider (Pexels default, Unsplash secundário, OpenAI opcional pago), salva queries default no brain. Roda script image-search.mjs com fetch nativo. Use quando configurar projeto pela primeira vez (em /onboard), quando criar post/página que precisa de imagem, ou quando o usuário pedir "configurar imagens", "banco de imagens", "buscar foto".
+description: Image system configuration for project — chooses style (canonical mood-board) + usage types, configures provider (Pexels default free, Unsplash secondary free, OpenAI Images optional paid), saves default search queries in LLM Wiki. Runs scripts/image-search.mjs (native fetch). Use when user asks "image system", "setup images", "configurar imagens", "banco de imagens", "buscar foto", "image provider", "stock photos", "mood board", or when configuring project for the first time (via /seobrain:start), or when creating post/page that needs imagery. Renamed from /setup-images (v0.1.0).
 allowed-tools:
   - Read
   - Write
@@ -9,7 +9,7 @@ allowed-tools:
   - WebFetch
 ---
 
-# /setup-images
+# /branding-images
 
 Sistema de imagens em 3 partes: **estilo** (mood-board), **tipos** (hero, secondary, avatar, illustration), **provider** (Pexels default).
 
@@ -112,7 +112,7 @@ Pexels (key configurada em .env.local).
 
 ## Uso operacional — script
 
-Quando outra skill (ex: `/blogpost`) precisa de imagem:
+Quando outra skill (ex: `/content-seo`) precisa de imagem:
 
 ```bash
 npm run images:search "<query>" [--provider=pexels|unsplash|both] [--limit=8] [--orientation=landscape|portrait|square]
@@ -137,8 +137,8 @@ Next.js 16 `next/image` faz otimização on-demand no build/edge.
 
 ## Cover image obrigatória em posts
 
-Toda chamada de `/blogpost` que termina sem `cover` no frontmatter
-dispara `/setup-images` automaticamente.
+Toda chamada de `/content-seo` que termina sem `cover` no frontmatter
+dispara `/branding-images` automaticamente.
 
 ## Atribuição
 

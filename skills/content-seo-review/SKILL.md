@@ -7,7 +7,7 @@ allowed-tools:
   - Glob
 ---
 
-# /qa-content — sub-agent QA editorial
+# /content-seo-review — sub-agent QA editorial
 
 Especialista em copy. Não toca em design ou build. Lê copy de páginas/posts alteradas, compara contra:
 - `brain/tom-de-voz.md` (voz, antivícios, capitalização BR).

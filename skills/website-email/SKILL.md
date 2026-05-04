@@ -8,7 +8,7 @@ allowed-tools:
   - Bash
 ---
 
-# /setup-email
+# /website-email
 
 Configura email transacional para o projeto. **Default: Resend** (free tier 3.000 emails/mês). Substitui o `mailto:` improvisado por algo profissional.
 
@@ -19,9 +19,9 @@ Configura email transacional para o projeto. **Default: Resend** (free tier 3.00
 
 ## Pipeline
 
-### 1. Plano (skill `/plano`)
+### 1. Plano (skill `/plan`)
 
-Cria `plans/setup-email-<data>.md`. Exemplo de critérios:
+Cria `plans/website-email-<data>.md`. Exemplo de critérios:
 - **FE:** form envia + usuário recebe email de teste no inbox
 - **BE:** `npm run web:build` passa, types OK, env var documentada em `brain/config.md`
 
@@ -169,4 +169,4 @@ Adiciona em Env vars necessárias:
 - **Default opinativo** — Resend. Outros providers ficam para pedido explícito.
 - **Domínio próprio depois.** No início, `onboarding@resend.dev` está OK; o usuário troca quando o domínio estiver pronto e verificado.
 - **Brain sempre atualizado.** `config.md` reflete status (configurado vs pendente).
-- **Plano antes.** Setup-email passa por `/plano` (mexe em deps + env + route handler — não-trivial).
+- **Plano antes.** Setup-email passa por `/plan` (mexe em deps + env + route handler — não-trivial).

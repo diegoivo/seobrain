@@ -1,11 +1,11 @@
 
-# /blogpost — pipeline editorial em 6 etapas
+# /content-seo — pipeline editorial em 6 etapas
 
-Substitui `/artigo`. Cada etapa **entrega um artefato concreto** salvo em `.cache/blogpost/<slug>/<step>.md` e **exige aprovação explícita** antes de avançar. O usuário pode reciclar etapas (ex.: "refazer a 3 com outro ângulo") sem refazer o início.
+Substitui `/content-seo`. Cada etapa **entrega um artefato concreto** salvo em `.cache/content-seo/<slug>/<step>.md` e **exige aprovação explícita** antes de avançar. O usuário pode reciclar etapas (ex.: "refazer a 3 com outro ângulo") sem refazer o início.
 
 ## HARD STOPs (antes de qualquer etapa)
 
-1. `brain/index.md` em `kit_state: template` → redirecionar para `/onboard`.
+1. `brain/index.md` em `kit_state: template` → redirecionar para `/seobrain:start`.
 2. `intent-analyst` ainda não rodou pra essa query → rodar antes da etapa 1.
 3. Sem 3 POVs proprietários no brain → bloquear na etapa 3.
 
@@ -153,7 +153,7 @@ status: draft
 Mais:
 - Outline H2 → 1 parágrafo de instrução por H2 (o que cobre, qual gap atende, qual POV cita).
 - Lista de internal links (consultar `content/posts/index.md` + `content/site/index.md`).
-- 2-3 imagens previstas (alt provisório) — pós-escrita roda `/seo-imagens`.
+- 2-3 imagens previstas (alt provisório) — pós-escrita roda `/technical-seo`.
 
 **Aprovação:** "briefing fechado, posso escrever?"
 
@@ -169,13 +169,13 @@ Mais:
 - Antivícios IA banidos (lista em `brain/tom-de-voz.md`).
 - Cada H2 abre com afirmação proprietária, depois desenvolve com evidência.
 - TL;DR no topo. FAQs antes do fechamento.
-- JSON-LD `Article` + `FAQPage` (se houver FAQs) — schemas via `/web-best-practices`.
+- JSON-LD `Article` + `FAQPage` (se houver FAQs) — schemas via `/website-bestpractices`.
 
 **Pós-escrita (auto):**
 1. `node scripts/article-quality.mjs <path>` — valida tamanho, parágrafos, bullets, antivícios.
 2. Se algum gate falhar, pause e mostre o relatório (não auto-corrija — pode quebrar voz).
-3. Roda `/geo-checklist` (citabilidade, llms.txt, FAQ schema, autoria) — output em `brain/seo/reports/`.
-4. Roda `/seo-onpage` (URL, intro, headings, internal links).
+3. Roda `/content-seo` (citabilidade, llms.txt, FAQ schema, autoria) — output em `brain/seo/reports/`.
+4. Roda `/technical-seo` (URL, intro, headings, internal links).
 
 **Saída final:** `content/posts/<slug>.md` com frontmatter + corpo + JSON-LD ao final em bloco `<script>` (consumido pelo Next).
 
@@ -185,10 +185,10 @@ Mais:
 
 Cada artefato (`step-N-<nome>.md`) é independente. Comandos:
 
-- `/blogpost --redo step=2` — refaz só a análise de concorrentes (mantém termos da etapa 1).
-- `/blogpost --resume` — continua da última etapa aprovada.
+- `/content-seo --redo step=2` — refaz só a análise de concorrentes (mantém termos da etapa 1).
+- `/content-seo --resume` — continua da última etapa aprovada.
 
-Cache em `.cache/blogpost/<slug>/`.
+Cache em `.cache/content-seo/<slug>/`.
 
 ## Sub-agents em paralelo
 
@@ -203,20 +203,20 @@ Sequencial: etapas entre si (cada uma depende da anterior). Dentro de cada etapa
 ## Auto-commit por etapa
 
 ```bash
-git add content/drafts/<slug>/ .cache/blogpost/<slug>/
+git add content/drafts/<slug>/ .cache/content-seo/<slug>/
 git commit -m "chore(blogpost): <slug> — etapa <N> aprovada"
 ```
 
 Etapa 6 (publicação): `git mv` do `content/drafts/<slug>.md` → `content/posts/<slug>.md` + commit `feat(content): blogpost <slug>`.
 
-## Diferença vs `/artigo` antigo
+## Diferença vs `/content-seo` antigo
 
-| Eixo | /artigo | /blogpost |
+| Eixo | /content-seo | /content-seo |
 |---|---|---|
 | Etapas | implícitas dentro de uma só skill | 6 explícitas, cada uma com gate |
 | Artefatos | só o post final | 6 markdown + post final |
 | Re-rodar parte | não | sim, etapa por etapa |
 | Aprovação | uma só no fim | granular por etapa |
-| Auditoria | só git history | `.cache/blogpost/<slug>/` permanece |
+| Auditoria | só git history | `.cache/content-seo/<slug>/` permanece |
 
-`/artigo` permanece no repo para retro-compatibilidade — mas a recomendação é `/blogpost`.
+`/content-seo` permanece no repo para retro-compatibilidade — mas a recomendação é `/content-seo`.

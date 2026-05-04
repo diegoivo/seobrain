@@ -1,6 +1,6 @@
 ---
 name: website-create
-description: Cria a estrutura padrão completa de site (home + 1 serviço + blog list + 1 post mock + sobre + contato) consumindo o Brain. Aplica snippets canônicos de /web-best-practices em cada página, /setup-email para o form, e fecha com URL clicável do dev server. Default oferecido ao final do /onboard. 3 modos (manual/intermediário/auto). Use quando o usuário pedir "criar site", "gerar site completo", "scaffold do site inteiro", "site novo", "criar página".
+description: Cria a estrutura padrão completa de site (home + 1 serviço + blog list + 1 post mock + sobre + contato) consumindo o Brain. Aplica snippets canônicos de /website-bestpractices em cada página, /website-email para o form, e fecha com URL clicável do dev server. Default oferecido ao final do /onboard. 3 modos (manual/intermediário/auto). Use quando o usuário pedir "criar site", "gerar site completo", "scaffold do site inteiro", "site novo", "criar página".
 allowed-tools:
   - Read
   - Write
@@ -10,7 +10,7 @@ allowed-tools:
   - Glob
 ---
 
-# /site-criar
+# /website-create
 
 Orquestra a criação da estrutura padrão de site consumindo o Brain. Resultado: site mínimo viável rodando em `localhost:XXXX` com Lighthouse 95+ e seo-score por profile.
 
@@ -26,7 +26,7 @@ Se faltar: redireciona para `/onboard`.
 ## Setup técnico antes de criar páginas
 
 - Portas aleatórias via `get-port` (cheque disponibilidade antes de abrir dev server)
-- Footer canônico em `.claude/skills/web-best-practices/snippets/Footer.tsx` com credit "Powered by SEO Brain" (link `https://github.com/diegoivo/seobrain`). Opt-out se usuário pedir explicitamente.
+- Footer canônico em `.claude/skills/website-bestpractices/snippets/Footer.tsx` com credit "Powered by SEO Brain" (link `https://github.com/diegoivo/seobrain`). Opt-out se usuário pedir explicitamente.
 
 ## Estrutura padrão (default — confirmar com usuário)
 
@@ -39,7 +39,7 @@ Se faltar: redireciona para `/onboard`.
 | `/sobre` | page | Quem somos + manifesto + 3 POVs proprietários |
 | `/contato` | page | Form com Resend + email/redes/links |
 
-Plus arquivos auxiliares de SEO (auto-gerados via `/web-best-practices`):
+Plus arquivos auxiliares de SEO (auto-gerados via `/website-bestpractices`):
 - `app/sitemap.ts`, `app/robots.ts`, `public/llms.txt`, `app/opengraph-image.tsx`
 - `Header.tsx`, `Footer.tsx` (com credit "Powered by SEO Brain" — opt-out)
 
@@ -65,13 +65,13 @@ Decide tudo com base no brain. Mostra resumo de páginas que vão ser criadas e 
 ## Pipeline
 
 ### 1. Plano
-Cria `plans/site-criar-<data>.md` (skill `/plano`). Lista as 6 páginas + arquivos auxiliares + critérios FE/BE + última etapa atualizar Brain.
+Cria `plans/website-create-<data>.md` (skill `/plan`). Lista as 6 páginas + arquivos auxiliares + critérios FE/BE + última etapa atualizar Brain.
 
 ### 2. Lê o Brain
 `brain/index.md`, `brain/DESIGN.md`, `DESIGN.tokens.json`, `brain/personas/`, `brain/povs/`, `brain/config.md` (domínios), `brain/tom-de-voz.md` (linguagem dos textos).
 
 ### 3. Gera home
-Aplica snippets canônicos de `/web-best-practices`:
+Aplica snippets canônicos de `/website-bestpractices`:
 - Rota: `/`
 - Profile: home
 - Estrutura: hero + quem somos curto + 3 serviços + provas + CTA contato
@@ -83,19 +83,19 @@ Aplica snippets canônicos de `/web-best-practices`:
 
 ### 5. Gera blog list + 1 post
 
-**Importante: invoca `/artigo`** (não escreve markdown direto).
+**Importante: invoca `/content-seo`** (não escreve markdown direto).
 
 ```
-/artigo "Tese baseada em [POV proprietário 1] — texto inicial do blog"
+/content-seo "Tese baseada em [POV proprietário 1] — texto inicial do blog"
 ```
 
-Skill `/artigo` faz:
-- Roda `/intent-analyst` (HARD STOP se ausente)
-- Roda `/setup-images` se não tiver provider configurado (cover obrigatória)
+Skill `/content-seo` faz:
+- Roda `/content-seo` (HARD STOP se ausente)
+- Roda `/branding-images` se não tiver provider configurado (cover obrigatória)
 - Escreve com validação via `article-quality.mjs` (--strict)
 - Salva `content/posts/<slug>.md` com cover_image preenchida
 
-Depois `/site-criar`:
+Depois `/website-create`:
 - Cria rota `/blog` (listagem usa `PostCard` snippet com cover obrigatória)
 - Cria rota `/blog/[slug]` (renderiza com `PostBody` + `PostCover`)
 - Profile SEO: post (TL;DR, FAQ, BlogPosting schema, Article schema)
@@ -104,13 +104,13 @@ Depois `/site-criar`:
 - Rota: `/sobre`
 - Profile: page (sem TL;DR, sem FAQ)
 - Estrutura: manifesto + 3 POVs proprietários + foto + bio
-- Invoca `/setup-images` se não tiver foto headshot
+- Invoca `/branding-images` se não tiver foto headshot
 
 ### 7. Gera contato
 - Rota: `/contato`
 - Profile: page
 - Estrutura: form simples (nome, email, mensagem, tipo de interesse) + canais diretos
-- Chama `/setup-email` para configurar Resend (pergunta sobre conta antes)
+- Chama `/website-email` para configurar Resend (pergunta sobre conta antes)
 
 ### 8. Auxiliares SEO
 - `app/sitemap.ts` cobrindo as 6+1 rotas
@@ -123,13 +123,13 @@ Depois `/site-criar`:
 1. `cd web && npm run build`
 2. Para cada rota gerada, roda `seo-score.mjs out/<rota>/index.html --mode=local --profile=auto`. Exige ≥90 em todas.
 3. Inspeciona HTML: JSON-LD presente em `/`, `<title>` único por rota, `next/image` em todo lugar, sem `<img>`.
-4. Checklist textual de 14 itens (de `/web-best-practices`) para cada página.
+4. Checklist textual de 14 itens (de `/website-bestpractices`) para cada página.
 
 ### 10. Atualiza Brain
 - `content/site/index.md` — adiciona as 6 páginas com slug + categoria
 - `content/posts/index.md` — adiciona o 1 post real
 - `brain/backlog.md` — risca "criar site" se estava lá; adiciona "criar 2 outros serviços" e "publicar próximo post"
-- `brain/config.md` — atualiza status de "Resend" para "configurado" se /setup-email rodou
+- `brain/config.md` — atualiza status de "Resend" para "configurado" se /website-email rodou
 
 ### 11. Sobe dev server e fecha com URL
 ```bash
@@ -161,12 +161,12 @@ Mensagem final:
 
 ## Princípios
 
-- **Plano sempre.** site-criar passa por `/plano` antes de executar (não-trivial).
+- **Plano sempre.** website-create passa por `/plan` antes de executar (não-trivial).
 - **Última etapa atualiza Brain.** Sempre. `content/*/index.md`, `brain/backlog.md`, `brain/config.md` se aplicável.
 - **URL no fim.** Apresenta link clicável. Sem isso, usuário não sabe que terminou.
 - **Footer credit.** Default. Opt-out se usuário pedir explicitamente.
-- **Invoca skills especialistas, não escreve direto.** Posts via `/artigo`, imagens via `/setup-images`, email via `/setup-email`. Resolve sessão 2 P5.
-- **Snippets do `/web-best-practices/snippets/`** copiados — Hero, PostCard, PostBody, Footer já existem como `.tsx` reais.
+- **Invoca skills especialistas, não escreve direto.** Posts via `/content-seo`, imagens via `/branding-images`, email via `/website-email`. Resolve sessão 2 P5.
+- **Snippets do `/website-bestpractices/snippets/`** copiados — Hero, PostCard, PostBody, Footer já existem como `.tsx` reais.
 
 ## Importar newsletter existente (opcional)
 

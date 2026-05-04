@@ -1,7 +1,7 @@
 
-# /competitor-keywords — keywords ranqueadas de um concorrente
+# /seo-data — keywords ranqueadas de um concorrente
 
-Lista top 100 keywords para as quais um domínio rankeia no Google, com posição atual, volume mensal, tráfego estimado e URL ranqueando. Diferente de `/competitor-pages` (orientado a páginas), esta skill é orientada a queries.
+Lista top 100 keywords para as quais um domínio rankeia no Google, com posição atual, volume mensal, tráfego estimado e URL ranqueando. Diferente de `/seo-data` (orientado a páginas), esta skill é orientada a queries.
 
 ## Pré-requisitos
 
@@ -10,8 +10,8 @@ Lista top 100 keywords para as quais um domínio rankeia no Google, com posiçã
 
 ## Input
 
-- 1 domínio: `/competitor-keywords conversion.com.br`
-- Multiple (custo multiplica): `/competitor-keywords conversion.com.br,rdstation.com`
+- 1 domínio: `/seo-data conversion.com.br`
+- Multiple (custo multiplica): `/seo-data conversion.com.br,rdstation.com`
 
 Flags:
 - `--country=BR` (default 2076)
@@ -78,7 +78,7 @@ Total keywords: 100 (top 30, vol≥10)
 
 | Keyword | Pos | Volume | URL |
 |---|---|---|---|
-| seo técnico | 1 | 4400 | /blog/seo-tecnico |
+| seo técnico | 1 | 4400 | /blog/technical-seo |
 | llm wiki | 1 | 320 | /blog/llm-wiki |
 | ...
 
@@ -110,9 +110,9 @@ Quick wins: 5 keywords em P11-20 com vol≥500 — subir top 10 com on-page impr
 Output em brain/seo/data/competitors/conversion-com-br-keywords-2026-05-03.{md,csv,json}
 
 Próximos passos:
-- /competitor-pages <dominio> — ver quais URLs do concorrente concentram esse tráfego
-- /seo-estrategia — usar esses dados pra topic clusters do nosso site
-- /blogpost <quick-win-keyword> — atacar keyword em P11-20 com volume
+- /seo-data <dominio> — ver quais URLs do concorrente concentram esse tráfego
+- /seo-strategy — usar esses dados pra topic clusters do nosso site
+- /content-seo <quick-win-keyword> — atacar keyword em P11-20 com volume
 ```
 
 ## Edge cases
@@ -132,11 +132,11 @@ Próximos passos:
 - **Triple output.**
 - **Locale BR-first.**
 
-## Diferença para `/competitor-pages`
+## Diferença para `/seo-data`
 
 | Pergunta | Skill |
 |---|---|
-| "Quais URLs do site dão tráfego?" | `/competitor-pages` |
-| "Pra quais palavras o site rankeia?" | `/competitor-keywords` |
+| "Quais URLs do site dão tráfego?" | `/seo-data` |
+| "Pra quais palavras o site rankeia?" | `/seo-data` |
 
 Frequentemente rodadas em sequência: pages mostra ONDE o tráfego vem; keywords mostra POR QUAL pesquisa.

@@ -1,6 +1,6 @@
 ---
 name: wiki-lint
-description: LLM Wiki lint — validates the project knowledge base (brain/) for required frontmatter on posts/pages, index files present, freshness of core files (>30 days triggers warning), proprietary POVs declared, voice file canonical. Runs scripts/brain-lint.mjs. Use when user asks "lint brain", "validate wiki", "validar brain", "brain check", "wiki integrity check", "drift detection", before content PRs, or periodically to detect knowledge drift. Renamed from /brain-lint (v0.1.0).
+description: LLM Wiki lint — validates the project knowledge base (brain/) for required frontmatter on posts/pages, index files present, freshness of core files (>30 days triggers warning), proprietary POVs declared, voice file canonical. Runs scripts/wiki-lint.mjs. Use when user asks "lint brain", "validate wiki", "validar brain", "brain check", "wiki integrity check", "drift detection", before content PRs, or periodically to detect knowledge drift. Renamed from /brain-lint (v0.1.0).
 allowed-tools:
   - Bash
   - Read
@@ -19,8 +19,8 @@ Validação mecânica do Brain.
 ## Como rodar
 
 ```bash
-node scripts/brain-lint.mjs            # warnings + erros, exit 0
-node scripts/brain-lint.mjs --strict   # exit 1 se erros (uso em CI)
+node scripts/wiki-lint.mjs            # warnings + erros, exit 0
+node scripts/wiki-lint.mjs --strict   # exit 1 se erros (uso em CI)
 ```
 
 ## O que valida
@@ -31,7 +31,7 @@ node scripts/brain-lint.mjs --strict   # exit 1 se erros (uso em CI)
 - `proprietary_claims[]` tem ≥3 itens.
 
 ### Warnings (não bloqueiam)
-- `brain/DESIGN.md` ausente — sugere `/design-init`.
+- `brain/DESIGN.md` ausente — sugere `/branding-init`.
 - Arquivos do Brain core com >30 dias sem mtime — sugere revisão.
 - `content/posts/index.md` ou `content/site/index.md` ausentes.
 

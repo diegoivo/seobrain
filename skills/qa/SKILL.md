@@ -4,6 +4,7 @@ description: QA orchestrator — runs 3 domain reviewers in parallel before pres
 allowed-tools:
   - Read
   - Bash
+  - Task
 ---
 
 # /qa — orchestrator paralelo de QA

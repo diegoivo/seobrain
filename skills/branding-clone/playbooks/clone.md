@@ -4,7 +4,7 @@
      (logo SVG, favicon, OG image), use `curl` via Bash. -->
 
 
-# /site-clone
+# /branding-clone
 
 Clonagem **visual real** via browser headless. Não Fetch HTML puro (resolve "chutei Inter" da sessão 2 L1172).
 
@@ -24,7 +24,7 @@ Esta tem que ser a primeira ação. Se você já abriu arquivos antes de checar,
 
 Se **ausente**, ofereça install ao usuário e PARE — não tente WebFetch, não tente curl, não prepare nada, não leia brain:
 
-> ❌ `/site-clone` exige `agent-browser` (binário Rust da Vercel Labs feito para agentes).
+> ❌ `/branding-clone` exige `agent-browser` (binário Rust da Vercel Labs feito para agentes).
 >
 > Posso instalar agora pra você? (~30s, ~120MB Chromium baixado uma única vez)
 >
@@ -34,14 +34,14 @@ Se **ausente**, ofereça install ao usuário e PARE — não tente WebFetch, nã
 >
 > Responda **"instalar"** para eu rodar, ou **"pular"** para abortar a clonagem.
 >
-> Se pular: `/onboard` segue para `/design-init` from-scratch, sem clone visual.
+> Se pular: `/seobrain:start` segue para `/branding-init` from-scratch, sem clone visual.
 
 Se o usuário disser "instalar":
 1. Roda `npm install -g agent-browser && agent-browser install` (Bash tool).
 2. Re-checa `command -v agent-browser`. Se ainda falhar, mostra erro e aborta.
 3. Continua o pipeline.
 
-Se o usuário disser "pular" (ou silenciar): aborte com mensagem clara — devolva controle ao orquestrador (`/onboard`) que vai pra `/design-init`.
+Se o usuário disser "pular" (ou silenciar): aborte com mensagem clara — devolva controle ao orquestrador (`/seobrain:start`) que vai pra `/branding-init`.
 
 **Princípio inegociável:** `WebFetch` e `curl` **não são fallback** desta skill. São tools listadas em `allowed-tools` apenas para baixar arquivos pontuais (logo SVG já identificado, favicon, OG image). Nunca para extrair tokens visuais ou paleta.
 
@@ -246,7 +246,7 @@ Quando o usuário responde, agente lê o markdown editado e aplica decisões. Se
 Por padrão, o clone preserva paleta + fontes + radius do real, mas mantém **escala tipográfica canônica** (perfect fourth 1.333) e **grid 12-col**. Para clones de fidelidade máxima:
 
 ```
-agent invoca /site-clone <url> --respect-clone-scale
+agent invoca /branding-clone <url> --respect-clone-scale
 ```
 
 Quando ativa: o `globals.css` do scaffold sobrescreve `--text-*` e `--leading-*` com valores extraídos (clampeados em 0.8x–1.4x do canônico para não quebrar layout). Trade-off documentado em `brain/log.md`: "clone com scale do real vs DNA do framework".
@@ -283,20 +283,20 @@ Atualizar `web/src/app/globals.css` (apenas tokens — escala/grid/spacing são 
 
 - `:root` cores (`--bg`, `--fg`, `--accent` etc) com hex extraídos.
 - `:root` fontes (`--font-display`, `--font-body`, `--font-mono`) com Google Fonts equivalentes.
-- Adicionar `next/font` import em `web/src/app/layout.tsx` (consultar `/web-best-practices`).
+- Adicionar `next/font` import em `web/src/app/layout.tsx` (consultar `/website-bestpractices`).
 
-Atualizar `web/src/app/brandbook/wordmark/page.tsx`: trocar "seobrain" pelo nome real da marca.
+Atualizar `web/src/app/branding-brandbook/wordmark/page.tsx`: trocar "seobrain" pelo nome real da marca.
 
-Rodar `cd web && npm run build` — se passar, abrir `/brandbook` mentalmente em viewport 375×812 e 1280×800. Cores e tipografia devem refletir o site clonado.
+Rodar `cd web && npm run build` — se passar, abrir `/branding-brandbook` mentalmente em viewport 375×812 e 1280×800. Cores e tipografia devem refletir o site clonado.
 
 Auto-commit:
 
 ```bash
-git add brain/DESIGN.md brain/DESIGN.tokens.json web/src/app/globals.css web/src/app/brandbook/ web/src/app/layout.tsx web/public/logo.* web/public/og.*
+git add brain/DESIGN.md brain/DESIGN.tokens.json web/src/app/globals.css web/src/app/branding-brandbook/ web/src/app/layout.tsx web/public/logo.* web/public/og.*
 git commit -m "chore(site-clone): tokens + assets de <domain> aplicados"
 ```
 
-Apresentar URL local: `npm run dev` → `/brandbook` para o usuário ver clone ao vivo.
+Apresentar URL local: `npm run dev` → `/branding-brandbook` para o usuário ver clone ao vivo.
 
 ### 7. Sugestão de hero
 

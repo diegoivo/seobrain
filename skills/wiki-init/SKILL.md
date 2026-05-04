@@ -1,6 +1,6 @@
 ---
 name: wiki-init
-description: Fase 1 do onboarding — popula o Brain (identidade, posicionamento, personas, POVs proprietários, voz, escopo, deploy). Re-rodável isoladamente. Recebe modo (auto/express/guiado), resposta inicial e research opcional do orquestrador /onboard. POVs proprietários são bloqueantes — não consenso de mercado. Use quando o usuário pedir "rodar fase brain", "popular o brain", "refazer o brain" ou quando /onboard chamar.
+description: LLM Wiki initialization (phase 1 of project onboarding) — populates brain/ with identity, positioning, personas, proprietary POVs, voice, scope, deploy config. Re-runnable in isolation. Accepts mode (auto/express/guiado), initial response, optional research from /seobrain:start orchestrator. Proprietary POVs are blocking — no consensus of market. Use when user asks "init brain", "populate wiki", "popular o brain", "rodar fase brain", "refazer o brain", "LLM wiki setup", "knowledge base init", or when /seobrain:start invokes phase 1. Renamed from /onboard-brain (v0.1.0).
 allowed-tools:
   - Read
   - Write
@@ -11,19 +11,19 @@ allowed-tools:
   - WebFetch
 ---
 
-# /onboard-brain — fase 1 do onboarding
+# /wiki-init — fase 1 do onboarding
 
 Popula o **Brain** (Karpathy LLM Wiki) deste projeto. Trabalha **uma sub-fase por vez**, com auto-commit ao fim de cada uma.
 
 ## Inputs do orquestrador
 
-Quando chamada pelo `/onboard`, recebe:
+Quando chamada pelo `/seobrain:start`, recebe:
 - `mode`: `auto` | `express` | `guiado`
 - `input_raw`: resposta literal do usuário à pergunta aberta
-- `research`: caminho opcional para `.cache/onboard-research.md` (output do sub-agent pesquisador)
+- `research`: caminho opcional para `.cache/seobrain-research.md` (output do sub-agent pesquisador)
 
 Quando chamada **standalone**:
-- Faz a pergunta aberta (mesma do `/onboard`).
+- Faz a pergunta aberta (mesma do `/seobrain:start`).
 - Pergunta o modo.
 
 ## Sub-fases
@@ -91,7 +91,7 @@ Confirma stack default (Next 16 SSG + Tailwind v4 + Vercel + sem banco) ou regis
 ### Auto
 
 1. Sub-agents pesquisam tudo (paralelo).
-2. Mostra plano consolidado em `plans/onboard-brain-<data>.md`.
+2. Mostra plano consolidado em `plans/wiki-init-<data>.md`.
 3. Aguarda **"go"**.
 4. Escreve as 6 sub-fases em sequência, auto-commit por sub-fase.
 5. Apresenta diff final + 3 perguntas granulares específicas.
@@ -133,12 +133,12 @@ Após cada sub-fase aprovada:
 
 ```bash
 git add brain/
-git commit -m "chore(onboard-brain): <sub-fase> — <slug>"
+git commit -m "chore(wiki-init): <sub-fase> — <slug>"
 ```
 
 ## Atualização do controle
 
-Ao fim de cada sub-fase, edite `.cache/onboard.md`:
+Ao fim de cada sub-fase, edite `.cache/seobrain.md`:
 
 ```markdown
 ## Fase 1 — Brain
@@ -155,7 +155,7 @@ Quando todas as sub-fases concluírem: Status: completed.
 
 ## Conclusão
 
-1. Roda `node scripts/brain-lint.mjs` — se houver erros, pause e mostre.
-2. Atualiza `brain/log.md` com entrada `## <data> — onboard-brain concluído`.
-3. Devolve controle ao orquestrador `/onboard` (que aciona `/onboard-brandbook`).
-4. Se rodando standalone: pergunta se usuário quer prosseguir para `/onboard-brandbook`.
+1. Roda `node scripts/wiki-lint.mjs` — se houver erros, pause e mostre.
+2. Atualiza `brain/log.md` com entrada `## <data> — wiki-init concluído`.
+3. Devolve controle ao orquestrador `/seobrain:start` (que aciona `/branding-onboard`).
+4. Se rodando standalone: pergunta se usuário quer prosseguir para `/branding-onboard`.

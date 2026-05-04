@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Cria um plano de execução em plans/<slug>-<date>.md antes de qualquer tarefa não-trivial. Lista objetivo, critérios de sucesso (FE - aprovação visual do usuário; BE - agente verifica via build/typecheck/test), etapas com checkboxes, riscos. A última etapa sempre atualiza o Brain. Use quando o usuário pedir mudanças em /web, package.json, brain/tecnologia, adicionar dependência, criar página, criar conteúdo, mudar tom de voz. Ou quando o próprio agente identificar que vai fazer algo grande.
+description: Execution plan generator — writes plans/<slug>-<date>.md before non-trivial tasks. Lists objective, success criteria (FE = visual user approval; BE = agent verifies via build/typecheck/test), checkboxed steps, risks. Last step always updates LLM Wiki. Use when user asks "create plan", "criar plano", "execution plan", "plano de execução", "plan before coding", "antes de implementar", or for changes to web/, package.json, dependencies, new page, new content, voice changes, architectural decisions. Auto-invoked when agent identifies non-trivial work.
 allowed-tools:
   - Read
   - Write
@@ -9,7 +9,7 @@ allowed-tools:
   - Grep
 ---
 
-# /plano
+# /plan
 
 Plano de execução em `plans/<slug>-<data>.md`. Pensa antes de fazer, registra para histórico, atualiza Brain ao final.
 
