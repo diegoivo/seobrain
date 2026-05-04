@@ -35,6 +35,35 @@ A raiz do framework hospeda só:
 - `scratch/` — git-ignored. Rascunhos do desenvolvimento do framework (planos, notas).
 - `.claude/skills/` + `.claude/commands/` — skills do framework, herdadas por todos os projetos.
 
+## Como criar um projeto (receita exata)
+
+Quando o usuário pedir "crie um projeto", "novo cliente", "começar projeto X" ou similar, siga **exatamente** esta receita:
+
+1. **Confirme o nome.** Use kebab-case (a-z, 0-9, hífen). Se o usuário não disse, pergunte. Exemplo: `cliente-acme`, `loja-livros`, `meu-blog`.
+2. **Confirme cwd na raiz do framework.** Rode `pwd` — você deve estar em algo terminado em `/seobrain` (ou o nome que o usuário deu ao clone), com `package.json` contendo `"name": "seobrain"`. Se estiver em outro lugar, faça `cd` para a raiz antes.
+3. **Crie o projeto** (preferir node direto sobre npm — não depende de `npm install` prévio):
+   ```bash
+   node scripts/new-project.mjs <nome>
+   ```
+   Isso copia `templates/project/` para `projects/<nome>/`, substitui placeholders, e **não instala** deps do Next.js (intencional — só instala quando o site for ser usado).
+4. **Mude para dentro do projeto.** Use cwd absoluto se precisar:
+   ```bash
+   cd projects/<nome>
+   ```
+5. **Confirme.** Rode `pwd` e verifique que está em `<framework>/projects/<nome>`. Verifique `package.json` contém `"seobrain-project": true`.
+6. **Próximo passo natural:** rode `/onboard` (Claude Code) ou diga ao usuário para rodar. Se o usuário pediu projeto + onboard na mesma frase, encadeie automaticamente.
+
+**Quando NÃO criar projeto:**
+- Se já existir `projects/<nome>` com mesmo nome, avise e pergunte se quer outro nome ou apagar o existente.
+- Se o usuário está pedindo para **mexer** num projeto que já existe, faça apenas `cd projects/<nome>` e prossiga.
+
+**Se `npm install` do `web/` for necessário** (usuário quer rodar o site):
+```bash
+cd <framework>/projects/<nome>/web
+npm install
+```
+Só faça isso quando o site for de fato ser executado/buildado.
+
 ## Ao iniciar sessão
 
 1. Hook `session-start.mjs` (Claude Code) detecta o contexto e avisa: framework root sem projeto, projeto template, ou projeto inicializado.

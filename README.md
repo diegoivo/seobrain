@@ -24,20 +24,20 @@ Referência conceitual: [agenticseo.sh](https://agenticseo.sh) · Multi-harness 
 ## Quick start
 
 ```bash
-git clone https://github.com/diegoivo/seobrain.git
-cd seobrain && npm install
-npm run new meu-projeto      # cria projects/meu-projeto/
-cd projects/meu-projeto
+git clone https://github.com/diegoivo/seobrain.git seobrain    # ou o nome que quiser
+cd seobrain
+# Abra o Claude Code (ou Codex/Cursor) aqui e diga:
+#   "crie um projeto chamado <nome-do-cliente>"
 ```
 
-Abra seu coding agent no diretório do projeto:
+O agente lê `AGENTS.md`, cria o projeto em `projects/<nome>/`, faz `cd` e roda `/onboard`. Sem `npm install` na raiz — o framework não tem dependências próprias (só APIs nativas do Node 18+). O `web/` de cada projeto instala suas deps do Next.js sob demanda.
 
-| Harness | Como invocar |
+| Harness | O que dizer |
 |---|---|
-| **Claude Code** | `/onboard` |
-| **Codex CLI** | "execute o onboard" |
-| **Antigravity** | "execute o onboard" |
-| **Cursor** | "rode a skill onboard" |
+| **Claude Code** | "crie um projeto chamado X" → depois `/onboard` |
+| **Codex CLI** | "crie projeto X e execute o onboard" |
+| **Antigravity** | "crie projeto X e execute o onboard" |
+| **Cursor** | "rode a skill onboard no projeto X" |
 
 > **Multi-projeto:** cada `projects/<nome>/` é autocontido (próprio `brain/`, `content/`, `web/`). É git-ignored no repo do framework. Pode virar repo próprio do cliente: `cd projects/<nome> && git init && git remote add origin <url>`.
 
@@ -134,16 +134,18 @@ seobrain/                          ← REPO PÚBLICO DO FRAMEWORK
 
 ## Comandos úteis
 
-**Da raiz do framework:**
+**Da raiz do framework** (sem deps, só Node 18+):
 ```bash
-npm run new <nome>              # cria projects/<nome>/ a partir do template
+node scripts/new-project.mjs <nome>   # cria projects/<nome>/
+# ou: npm run new <nome>              # mesmo efeito, via npm script
 ```
 
-**De dentro de um projeto (`cd projects/<nome>`):**
+**De dentro de um projeto** (`cd projects/<nome>`):
 ```bash
 npm run brain:lint              # valida Brain (orphans, broken refs, stale)
 npm run seo:score <url>         # SEO Score (auto-detecta profile)
 npm run perf:audit <url>        # Lighthouse via PSI + fallback local
+npm run web:install             # instala deps do Next.js (1ª vez)
 npm run web:dev                 # Next.js em porta aleatória
 npm run web:build               # build de produção
 ```

@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 // new-project — copia templates/project/ para projects/<nome>/.
-// Substitui placeholders e (opcionalmente) instala deps do web/.
+// Substitui placeholders. Por padrão NÃO instala deps do web/ (só roda
+// `npm install` se passar --install ou quando o site for de fato usado).
 //
 // Uso (a partir da raiz do framework):
-//   npm run new <nome>
-//   node scripts/new-project.mjs <nome> [--no-install]
+//   node scripts/new-project.mjs <nome>            # sem npm install
+//   node scripts/new-project.mjs <nome> --install  # instala deps do web/ tambem
+//   npm run new <nome>                             # mesmo efeito (sem install)
 
 import { spawnSync } from "node:child_process";
 import {
@@ -20,7 +22,7 @@ const TEMPLATE_DIR = join(FRAMEWORK_ROOT, "templates/project");
 
 const args = argv.slice(2);
 const name = args.find((a) => !a.startsWith("--"));
-const skipInstall = args.includes("--no-install");
+const doInstall = args.includes("--install");
 
 if (!name) {
   console.error("Uso: npm run new <nome>");
@@ -62,7 +64,7 @@ console.log("  · Personalizando package.json e README...");
 patchFile(join(dest, "package.json"), name);
 patchFile(join(dest, "README.md"), name);
 
-if (!skipInstall) {
+if (doInstall) {
   console.log("  · Instalando deps do web/...");
   const r = spawnSync("npm", ["install"], {
     cwd: join(dest, "web"),
@@ -79,6 +81,11 @@ console.log(`  cd projects/${name}`);
 console.log(`  # Claude Code:        /onboard`);
 console.log(`  # Codex / Antigravity: "execute o onboard"`);
 console.log("");
+if (!doInstall) {
+  console.log(`Quando for rodar o site (Next.js):`);
+  console.log(`  cd projects/${name} && npm run web:install`);
+  console.log("");
+}
 console.log(`Para virar repo do cliente depois (opcional):`);
 console.log(`  cd projects/${name} && git init && git remote add origin <url>`);
 console.log("");
