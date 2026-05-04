@@ -2,7 +2,7 @@
 // triple output (md + csv + json) em brain/seo/data/gsc/.
 //
 // Por que separado: gsc-client.mjs é específico de auth/HTTP. Output é
-// genérico e reusado por /gsc-google-search-console-performance e /gsc-google-search-console-coverage.
+// genérico e reusado por /gsc-google-search-console (performance) e /gsc-google-search-console (coverage).
 
 import { writeFileSync, mkdirSync, existsSync, appendFileSync } from "node:fs";
 import { dirname } from "node:path";

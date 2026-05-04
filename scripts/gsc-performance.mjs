@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// /gsc-google-search-console-performance — extrai top queries + pages + oportunidades do GSC.
+// /gsc-google-search-console (performance) — extrai top queries + pages + oportunidades do GSC.
 // Output triplo (md + csv + json) em brain/seo/data/gsc/.
 //
 // Uso:

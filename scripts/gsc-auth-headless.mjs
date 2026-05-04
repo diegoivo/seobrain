@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Helper não-interativo do /gsc-google-search-console-setup. Recebe client_id + secret,
+// Helper não-interativo do /gsc-google-search-console (setup). Recebe client_id + secret,
 // abre consent no browser, captura code via callback, troca por
 // refresh_token, lista properties. Imprime JSON em stdout.
 //

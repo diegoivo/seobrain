@@ -97,7 +97,7 @@ test("dateRangeDays: gera range correto com delay 2d", () => {
 test("normalizeError: 401 vira mensagem acionável", () => {
   const err = _internal.normalizeError({ code: 401, message: "invalid auth" });
   assert.match(err.message, /Token GSC inválido/);
-  assert.match(err.message, /\/gsc-google-search-console-setup/);
+  assert.match(err.message, /\/gsc-google-search-console/);
 });
 
 test("normalizeError: 403 menciona Settings → Users", () => {

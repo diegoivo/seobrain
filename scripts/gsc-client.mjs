@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Google Search Console shared client — OAuth2 + token refresh + erro handling.
-// Skills /gsc-google-search-console-setup (gera refresh_token), /gsc-google-search-console-performance, /gsc-google-search-console-coverage usam.
+// Skills /gsc-google-search-console (setup) (gera refresh_token), /gsc-google-search-console (performance), /gsc-google-search-console (coverage) usam.
 // Falha cedo com mensagem acionável se credenciais ausentes ou inválidas.
 
 import { google } from "googleapis";
@@ -19,7 +19,7 @@ export class GSCError extends Error {
 }
 
 // Carrega credenciais do .env.local. Aborta cedo se ausentes.
-// `requireRefreshToken: false` permite /gsc-google-search-console-setup chamar sem refresh ainda.
+// `requireRefreshToken: false` permite /gsc-google-search-console (setup) chamar sem refresh ainda.
 export function loadCredentials({ requireRefreshToken = true } = {}) {
   const clientId = process.env.GSC_CLIENT_ID;
   const clientSecret = process.env.GSC_CLIENT_SECRET;
@@ -43,7 +43,7 @@ function setupHint(reason) {
   return [
     `❌ Google Search Console não configurado (${reason}).`,
     "",
-    "Rode a skill /gsc-google-search-console-setup pra configurar OAuth de forma guiada.",
+    "Rode a skill /gsc-google-search-console (setup) pra configurar OAuth de forma guiada.",
     "Ela abre URLs no Chrome e te conduz pelo Google Cloud Console.",
     "",
     "Custo: GRÁTIS (API do Google, quota 1.200 req/min).",
@@ -69,7 +69,7 @@ export function createSearchConsoleClient(auth) {
   return google.searchconsole({ version: "v1", auth });
 }
 
-// URL de consent pra fluxo OAuth. /gsc-google-search-console-setup constrói com redirect_uri local.
+// URL de consent pra fluxo OAuth. /gsc-google-search-console (setup) constrói com redirect_uri local.
 export function buildConsentUrl(client) {
   return client.generateAuthUrl({
     access_type: "offline",
@@ -117,7 +117,7 @@ function normalizeError(err) {
         "  • Refresh token revogado em https://myaccount.google.com/permissions\n" +
         "  • OAuth client deletado no Google Cloud Console\n" +
         "  • Conta sem acesso à property\n\n" +
-        "Solução: rode /gsc-google-search-console-setup novamente.",
+        "Solução: rode /gsc-google-search-console (setup) novamente.",
       { status, code: apiCode, details: err.response?.data }
     );
   }
@@ -126,7 +126,7 @@ function normalizeError(err) {
     return new GSCError(
       "❌ Sem permissão pra acessar essa property.\n\n" +
         "Verifique em https://search.google.com/search-console/users\n" +
-        "que a conta Google usada no /gsc-google-search-console-setup tem acesso à property.\n\n" +
+        "que a conta Google usada no /gsc-google-search-console (setup) tem acesso à property.\n\n" +
         `Detalhes: ${baseMsg}`,
       { status, code: apiCode, details: err.response?.data }
     );
@@ -154,7 +154,7 @@ function normalizeError(err) {
   return new GSCError(`❌ GSC API erro (${status}): ${baseMsg}`, { status, code: apiCode, details: err.response?.data });
 }
 
-// Lista properties acessíveis. Usado em /gsc-google-search-console-setup pra escolha + validação.
+// Lista properties acessíveis. Usado em /gsc-google-search-console (setup) pra escolha + validação.
 export async function listProperties(auth) {
   const sc = createSearchConsoleClient(auth);
   const res = await callGSC(() => sc.sites.list());

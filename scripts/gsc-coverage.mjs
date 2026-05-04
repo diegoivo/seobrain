@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// /gsc-google-search-console-coverage — lista sitemaps + status de cada um (warnings, errors,
+// /gsc-google-search-console (coverage) — lista sitemaps + status de cada um (warnings, errors,
 // indexação). Output triplo em brain/seo/data/gsc/coverage-<date>.{md,csv,json}.
 //
 // Uso:

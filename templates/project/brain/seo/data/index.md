@@ -18,7 +18,7 @@ sources: []
 |---|---|---|
 | `keywords/` | `/keywords-volume` | Volume + CPC + dificuldade de keywords (DataForSEO) |
 | `competitors/` | `/competitor-pages`, `/competitor-keywords` | Páginas e keywords de concorrentes (DataForSEO) |
-| `gsc/` | `/gsc-google-search-console-performance`, `/gsc-google-search-console-coverage` | Dados reais do site no Google Search Console (grátis) |
+| `gsc/` | `/gsc-google-search-console (performance)`, `/gsc-google-search-console (coverage)` | Dados reais do site no Google Search Console (grátis) |
 
 ## Convenção de nomes
 

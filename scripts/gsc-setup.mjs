@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// /gsc-google-search-console-setup — fluxo OAuth guiado pra Google Search Console.
+// /gsc-google-search-console (setup) — fluxo OAuth guiado pra Google Search Console.
 // BYO credentials: cliente cria projeto Google Cloud + OAuth client próprio.
 // Abre URLs no Chrome real do usuário e instrui passo a passo.
 // Captura refresh_token via callback localhost.
@@ -34,7 +34,7 @@ async function main() {
   const projectRoot = resolveProjectRoot();
   if (!projectRoot) {
     console.error("");
-    console.error("❌ /gsc-google-search-console-setup precisa rodar dentro de um projeto SEO Brain.");
+    console.error("❌ /gsc-google-search-console (setup) precisa rodar dentro de um projeto SEO Brain.");
     console.error("");
     console.error("   Opções:");
     console.error("     • cd projects/<nome>  (se já existe)");
@@ -63,7 +63,7 @@ async function main() {
     console.log(`   Property atual: ${env.GSC_PROPERTY ?? "(não definida)"}`);
     console.log("");
     console.log("   Reconfigurar? Use: node scripts/gsc-setup.mjs --force");
-    console.log("   Ou rode /gsc-google-search-console-performance ou /gsc-google-search-console-coverage diretamente.");
+    console.log("   Ou rode /gsc-google-search-console (performance) ou /gsc-google-search-console (coverage) diretamente.");
     exit(0);
   }
 
@@ -235,7 +235,7 @@ async function main() {
       console.error("   Adicione uma property em https://search.google.com/search-console");
       console.error("   e verifique propriedade (DNS, HTML tag, ou Google Analytics).");
       console.error("");
-      console.error("   Depois rode /gsc-google-search-console-setup --force.");
+      console.error("   Depois rode /gsc-google-search-console (setup) --force.");
       exit(1);
     }
 
@@ -294,8 +294,8 @@ async function main() {
     console.log(`   Brain config:       ${join(projectRoot, "brain/config.md")}`);
     console.log("");
     console.log("Próximos passos:");
-    console.log("   /gsc-google-search-console-performance       # top queries dos últimos 90 dias");
-    console.log("   /gsc-google-search-console-coverage          # status de sitemaps + erros de indexação");
+    console.log("   /gsc-google-search-console (performance)       # top queries dos últimos 90 dias");
+    console.log("   /gsc-google-search-console (coverage)          # status de sitemaps + erros de indexação");
     console.log("");
     console.log("Custo: GRÁTIS (quota 1.200 req/min/projeto).");
     console.log("Token refresh é automático.");
@@ -357,7 +357,7 @@ function waitForCallback(port) {
 
     const timer = setTimeout(() => {
       cleanup();
-      rejectP(new GSCError("Timeout aguardando callback (10min). Rode /gsc-google-search-console-setup de novo.", { status: 0 }));
+      rejectP(new GSCError("Timeout aguardando callback (10min). Rode /gsc-google-search-console (setup) de novo.", { status: 0 }));
     }, CALLBACK_TIMEOUT_MS);
 
     function cleanup() {
@@ -451,7 +451,7 @@ function updateBrainConfig(projectRoot, { property, userEmail, permissionLevel }
     `- **Permissão:** ${permissionLevel}`,
     `- **Configurado em:** ${today}`,
     "",
-    "Skills disponíveis: `/gsc-google-search-console-performance`, `/gsc-google-search-console-coverage`",
+    "Skills disponíveis: `/gsc-google-search-console (performance)`, `/gsc-google-search-console (coverage)`",
     "",
   ].join("\n");
 
